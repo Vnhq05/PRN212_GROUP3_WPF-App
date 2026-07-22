@@ -1,0 +1,47 @@
+<Window x:Class="CarWashingSystem.StaffWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Bảng Điều Khiển Nhân Viên - Hệ Thống Rửa Xe" Height="600" Width="900"
+        WindowStartupLocation="CenterScreen" Background="#F4F7FB">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Header -->
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,20" VerticalAlignment="Center">
+            <StackPanel Width="400">
+                <TextBlock Text="BẢNG ĐIỀU KHIỂN NHÂN VIÊN" FontSize="24" FontWeight="Bold" Foreground="#0284C7"/>
+            </StackPanel>
+            
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Width="440" FlowDirection="RightToLeft">
+                <Button Content="Đăng Xuất" Height="38" Width="100" Background="#FEE2E2" Foreground="#EF4444" FontWeight="Bold" BorderThickness="0" Cursor="Hand" Margin="0,0,10,0"/>
+                <Button Content="Xem Đánh Giá" Height="38" Width="130" Background="#E0F2FE" Foreground="#0284C7" FontWeight="Bold" BorderThickness="0" Margin="0,0,10,0" Cursor="Hand"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Main Content -->
+        <Border Grid.Row="1" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="10" Padding="25">
+            <StackPanel>
+                <TextBlock Text="CÔNG VIỆC ĐƯỢC GIAO &amp; LỊCH SỬ" FontSize="18" FontWeight="Bold" Foreground="#333" Margin="0,0,0,20"/>
+                
+                <DataGrid MinHeight="300" AutoGenerateColumns="False" CanUserAddRows="False" Background="#FAFAFA" BorderBrush="#E5E7EB" RowHeight="35" HeadersVisibility="Column">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Mã CV" Width="80"/>
+                        <DataGridTextColumn Header="Tên Khách Hàng" Width="150"/>
+                        <DataGridTextColumn Header="Thông Tin Xe" Width="150"/>
+                        <DataGridTextColumn Header="Dịch Vụ Yêu Cầu" Width="*"/>
+                        <DataGridTextColumn Header="Khung Giờ" Width="120"/>
+                        <DataGridTextColumn Header="Trạng Thái" Width="100"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+                    <Button Content="Đánh Dấu Đang Xử Lý" Width="160" Height="40" Background="#FEF3C7" Foreground="#D97706" FontWeight="Bold" BorderThickness="0" Margin="0,0,10,0" Cursor="Hand"/>
+                    <Button Content="Hoàn Thành Dịch Vụ" Width="160" Height="40" Background="#0284C7" Foreground="White" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
