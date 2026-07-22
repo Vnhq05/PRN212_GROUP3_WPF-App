@@ -1,0 +1,113 @@
+﻿<Window x:Class="CarWashingSystem.Dashboard"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CarWashingSystem"
+        mc:Ignorable="d"
+        Title="Dashboard" Height="450" Width="800">
+    <Grid>
+        <Grid Margin="30">
+
+            <!-- KHỐI CARD TRẮNG CHÍNH -->
+            <Border Background="White" CornerRadius="12" Padding="30">
+                <!-- Đổ bóng mờ -->
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="2" Opacity="0.05"/>
+                </Border.Effect>
+
+                <Grid>
+                    <!-- Chia làm 3 phần: Tiêu đề (0), Thống kê (1), và Bảng lịch sử (2) -->
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <!-- Dấu * để bảng tự giãn ra chiếm hết phần còn lại -->
+                    </Grid.RowDefinitions>
+
+                    <!-- PHẦN 0: TIÊU ĐỀ -->
+                    <StackPanel Grid.Row="0" Margin="0,0,0,25" HorizontalAlignment="Center">
+                        <TextBlock Text="CAR WASHING" FontSize="26" FontWeight="ExtraBold" Foreground="#0284C7" HorizontalAlignment="Center" />
+                        <TextBlock Text="LỊCH SỬ &amp; ĐÁNH GIÁ DỊCH VỤ" FontSize="16" FontWeight="Bold" Foreground="#374151" HorizontalAlignment="Center" Margin="0,5,0,0" />
+                    </StackPanel>
+
+                    <!-- PHẦN 1: THỐNG KÊ NHANH (SƯỜN: Để trống Text chờ C# nạp vào) -->
+                    <Grid Grid.Row="1" Margin="0,0,0,25">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="20"/>
+                            <!-- Khoảng cách giữa 2 cục -->
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Tổng số lần rửa -->
+                        <Border Grid.Column="0" Background="#F0F9FF" CornerRadius="8" Padding="20">
+                            <StackPanel>
+                                <TextBlock Text="Tổng số lần rửa xe" Foreground="#0284C7" FontSize="14" FontWeight="SemiBold"/>
+                                <TextBlock Name="txtTotalWashes" Text="..." FontSize="28" FontWeight="Bold" Foreground="#1E3A8A" Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Tổng chi tiêu -->
+                        <Border Grid.Column="2" Background="#F0F9FF" CornerRadius="8" Padding="20">
+                            <StackPanel>
+                                <TextBlock Text="Tổng tiền đã chi tiêu" Foreground="#0284C7" FontSize="14" FontWeight="SemiBold"/>
+                                <TextBlock Name="txtTotalSpent" Text="..." FontSize="28" FontWeight="Bold" Foreground="#1E3A8A" Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- PHẦN 2: BẢNG LỊCH SỬ (DataGrid) -->
+                    <!-- Thiết lập AutoGenerateColumns="False" để tự định nghĩa các cột cho đẹp -->
+                    <DataGrid Name="dgHistory" Grid.Row="2" AutoGenerateColumns="False" CanUserAddRows="False" 
+                          Background="White" BorderBrush="#E5E7EB" BorderThickness="1" 
+                          RowHeight="45" HeadersVisibility="Column" 
+                          GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F3F4F6" VerticalGridLinesBrush="Transparent">
+
+                        <!-- Định dạng tiêu đề cột cho DataGrid -->
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="#F9FAFB"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="Padding" Value="10,0"/>
+                                <Setter Property="Height" Value="40"/>
+                                <Setter Property="Foreground" Value="#4B5563"/>
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+
+                        <!-- Khai báo các cột (Sẽ binding dữ liệu từ C#) -->
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Mã Lịch" Binding="{Binding AppointmentId}" Width="80" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Ngày Giờ" Binding="{Binding BookingTime}" Width="150" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Biển Số" Binding="{Binding LicensePlate}" Width="120" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Giá Tiền" Binding="{Binding Price}" Width="120" IsReadOnly="True"/>
+
+                            <!-- Cột Trạng thái (Đã rửa / Chờ rửa) -->
+                            <DataGridTextColumn Header="Trạng Thái" Binding="{Binding Status}" Width="120" IsReadOnly="True"/>
+
+                            <!-- Cột Thao tác (Chứa nút bấm để Đánh giá hoặc Xem) -->
+                            <DataGridTemplateColumn Header="Đánh Giá" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <!-- Nút này sẽ được gán sự kiện Click để mở trang RatingPage -->
+                                        <Button Content="{Binding ActionText}" Tag="{Binding AppointmentId}" 
+                                            Click="btnAction_Click"
+                                            Background="#0284C7" Foreground="White" FontWeight="Bold" 
+                                            Width="110" Height="30" Cursor="Hand" BorderThickness="0">
+                                            <Button.Resources>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="CornerRadius" Value="4"/>
+                                                </Style>
+                                            </Button.Resources>
+                                        </Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
