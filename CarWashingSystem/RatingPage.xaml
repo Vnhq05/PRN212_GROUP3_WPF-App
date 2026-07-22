@@ -1,0 +1,118 @@
+﻿<Page x:Class="CarWashingSystem.RatingPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="RatingPage" Background="#F3F4F6">
+
+    <!-- KHAI BÁO STYLE NỘI BỘ CHO TRANG -->
+    <Page.Resources>
+        <!-- Style Nút chính (Gửi đánh giá) - Màu xanh -->
+        <Style TargetType="Button" x:Key="PrimaryButtonStyle">
+            <Setter Property="Background" Value="#0284C7"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#0269A4"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Style Nút phụ (Quay lại) - Màu xám nhạt -->
+        <Style TargetType="Button" x:Key="SecondaryButtonStyle">
+            <Setter Property="Background" Value="#E5E7EB"/>
+            <Setter Property="Foreground" Value="#4B5563"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#D1D5DB"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Page.Resources>
+
+    <!-- LƯỚI CĂN GIỮA MÀN HÌNH -->
+    <Grid>
+        <!-- KHỐI CARD TRẮNG BO GÓC -->
+        <Border Background="White" Width="500" VerticalAlignment="Center" HorizontalAlignment="Center"
+                CornerRadius="12" Margin="20" Padding="30,40,30,40">
+
+            <!-- Hiệu ứng đổ bóng mờ -->
+            <Border.Effect>
+                <DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="2" Opacity="0.05"/>
+            </Border.Effect>
+
+            <StackPanel>
+
+                <!-- Logo & Tiêu đề -->
+                <TextBlock Text="CAR WASHING" FontSize="26" FontWeight="ExtraBold" Foreground="#0284C7" HorizontalAlignment="Center" />
+                <TextBlock Text="ĐÁNH GIÁ DỊCH VỤ" FontSize="18" FontWeight="Bold" Foreground="#374151" HorizontalAlignment="Center" Margin="0,15,0,5" />
+                <TextBlock Text="Cảm ơn bạn đã sử dụng dịch vụ. Hãy để lại đánh giá nhé!" FontSize="13" Foreground="#6B7280" HorizontalAlignment="Center" Margin="0,0,0,25" />
+
+                <!-- Khung thông tin lịch hẹn (Được bọc trong một box xám nhạt để nhấn mạnh) -->
+                <Border Background="#F9FAFB" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Thông tin lịch hẹn:" FontSize="12" Foreground="#6B7280" Margin="0,0,0,5" />
+                        <TextBlock Name="txtBookingInfo" Text="" FontWeight="SemiBold" Foreground="#1F2937" FontSize="14" />
+                    </StackPanel>
+                </Border>
+
+                <!-- 1. Chọn số sao -->
+                <TextBlock Text="1. Điểm đánh giá (1 - 5 sao):" FontSize="13" FontWeight="SemiBold" Foreground="#4B5563" Margin="0,0,0,10" />
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                    <RadioButton Name="rb1Star" Content="1 ⭐" FontSize="13" Foreground="#374151" Margin="0,0,15,0" />
+                    <RadioButton Name="rb2Star" Content="2 ⭐" FontSize="13" Foreground="#374151" Margin="0,0,15,0" />
+                    <RadioButton Name="rb3Star" Content="3 ⭐" FontSize="13" Foreground="#374151" Margin="0,0,15,0" />
+                    <RadioButton Name="rb4Star" Content="4 ⭐" FontSize="13" Foreground="#374151" Margin="0,0,15,0" />
+                    <RadioButton Name="rb5Star" Content="5 ⭐" FontSize="13" Foreground="#374151" IsChecked="True" />
+                </StackPanel>
+
+                <!-- 2. Ô nhập nhận xét -->
+                <TextBlock Text="2. Nhận xét chi tiết (Tùy chọn):" FontSize="13" FontWeight="SemiBold" Foreground="#4B5563" Margin="0,0,0,5" />
+                <TextBox Name="txtComment" Height="100" TextWrapping="Wrap" AcceptsReturn="True" 
+                         VerticalScrollBarVisibility="Auto" Padding="8" Margin="0,0,0,25" 
+                         BorderBrush="#D1D5DB" FontSize="13" />
+
+                <!-- Các nút bấm (Dùng Grid để chia tỷ lệ chiều ngang cho đẹp) -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <!-- Nút Gửi chiếm phần không gian lớn hơn -->
+                        <ColumnDefinition Width="15" />
+                        <!-- Khoảng cách -->
+                        <ColumnDefinition Width="110" />
+                        <!-- Nút Quay lại nhỏ hơn -->
+                    </Grid.ColumnDefinitions>
+
+                    <Button Name="btnSubmit" Content="Xác Nhận Đánh Giá" Height="42" Grid.Column="0" 
+                            Style="{StaticResource PrimaryButtonStyle}" />
+
+                    <Button Name="btnCancel" Content="Quay lại" Height="42" Grid.Column="2" 
+                            Style="{StaticResource SecondaryButtonStyle}" />
+                </Grid>
+
+            </StackPanel>
+        </Border>
+    </Grid>
+</Page>
