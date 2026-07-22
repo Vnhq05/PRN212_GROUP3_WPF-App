@@ -1,0 +1,197 @@
+﻿<Window x:Class="CarWashingSystem.ProfilePage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CarWashingSystem"
+        mc:Ignorable="d"
+        Title="ProfilePage" Height="688" Width="800">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- Khối Thông tin cá nhân -->
+                <RowDefinition Height="Auto"/>
+                <!-- Khối Danh sách xe (DataGrid) -->
+                <RowDefinition Height="Auto"/>
+                <!-- Khối Quản lý / Nhập xe mới -->
+            </Grid.RowDefinitions>
+
+            <!-- 1. THÔNG TIN CÁ NHÂN -->
+            <Border Grid.Row="0" Background="White" CornerRadius="10" Padding="20" Margin="0,0,0,20">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="15" Color="#CBD5E1" Direction="270" ShadowDepth="3" Opacity="0.4"/>
+                </Border.Effect>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Avatar đơn giản -->
+                    <Border Grid.Column="0" Width="70" Height="70" CornerRadius="35" Background="#0284C7" Margin="0,0,20,0" VerticalAlignment="Center">
+                        <TextBlock Text="👤" FontSize="32" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
+                    </Border>
+
+                    <!-- Thông tin -->
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding FullName, FallbackValue='Nguyễn Văn A'}" FontSize="20" FontWeight="Bold" Foreground="#1E293B"/>
+
+                        <WrapPanel Margin="0,8,0,0">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,25,5">
+                                <TextBlock Text="Gmail: " FontWeight="SemiBold" Foreground="#64748B" FontSize="13"/>
+                                <TextBlock Text="{Binding Email, FallbackValue='nguyenvana@gmail.com'}" Foreground="#334155" FontSize="13"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,0,25,5">
+                                <TextBlock Text="SĐT: " FontWeight="SemiBold" Foreground="#64748B" FontSize="13"/>
+                                <TextBlock Text="{Binding Phone, FallbackValue='0901234567'}" Foreground="#334155" FontSize="13"/>
+                            </StackPanel>
+                        </WrapPanel>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- 2. DANH SÁCH XE ĐÃ ĐĂNG KÝ -->
+            <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="20" Margin="0,0,0,20">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="15" Color="#CBD5E1" Direction="270" ShadowDepth="3" Opacity="0.4"/>
+                </Border.Effect>
+
+                <StackPanel>
+                    <TextBlock Text="DANH SÁCH XE ĐÃ ĐĂNG KÝ" FontSize="16" FontWeight="Bold" Foreground="#0284C7" Margin="0,0,0,15"/>
+
+                    <DataGrid ItemsSource="{Binding Vehicles}" 
+                          SelectedItem="{Binding SelectedVehicle}"
+                          AutoGenerateColumns="False" 
+                          CanUserAddRows="False"
+                          IsReadOnly="True"
+                          Height="180"
+                          Background="White"
+                          BorderBrush="#E2E8F0"
+                          BorderThickness="1"
+                          GridLinesVisibility="Horizontal"
+                          HorizontalGridLinesBrush="#F1F5F9"
+                          RowHeight="35">
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="#F8FAFC"/>
+                                <Setter Property="Foreground" Value="#475569"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="Height" Value="35"/>
+                                <Setter Property="Padding" Value="10,0"/>
+                                <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                <Setter Property="BorderBrush" Value="#E2E8F0"/>
+                            </Style>
+                        </DataGrid.Resources>
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Biển số xe" Binding="{Binding LicensePlate}" Width="140"/>
+                            <DataGridTextColumn Header="Loại xe" Binding="{Binding VehicleType}" Width="120"/>
+                            <DataGridTextColumn Header="Thương hiệu / Dòng xe" Binding="{Binding Brand}" Width="200"/>
+                            <DataGridTextColumn Header="Ghi chú" Binding="{Binding Note}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </Border>
+
+            <!-- 3. QUẢN LÝ XE (THÊM / CẬP NHẬT / XÓA) -->
+            <Border Grid.Row="2" Background="White" CornerRadius="10" Padding="20">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="15" Color="#CBD5E1" Direction="270" ShadowDepth="3" Opacity="0.4"/>
+                </Border.Effect>
+
+                <StackPanel>
+                    <TextBlock Text="THÔNG TIN CHI TIẾT (THÊM / CHỈNH SỬA XE)" FontSize="16" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,15"/>
+
+                    <!-- Form nhập thông tin xe -->
+                    <UniformGrid Columns="2" Margin="0,0,0,10">
+                        <!-- Biển số xe -->
+                        <StackPanel Margin="0,0,10,10">
+                            <TextBlock Text="Biển số xe (*)" Foreground="#475569" FontSize="12" FontWeight="Medium" Margin="0,0,0,4"/>
+                            <Border BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="6" Padding="2">
+                                <TextBox Height="30" BorderThickness="0" VerticalContentAlignment="Center" Padding="8,0" FontSize="13" Background="Transparent"
+                                     Text="{Binding InputLicensePlate, UpdateSourceTrigger=PropertyChanged}"/>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Loại xe -->
+                        <StackPanel Margin="10,0,0,10">
+                            <TextBlock Text="Loại xe" Foreground="#475569" FontSize="12" FontWeight="Medium" Margin="0,0,0,4"/>
+                            <Border BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="6" Padding="2">
+                                <ComboBox Height="30" BorderThickness="0" VerticalContentAlignment="Center" Padding="8,0" FontSize="13"
+                                      Text="{Binding InputVehicleType}">
+                                    <ComboBoxItem Content="Ô tô 4 chỗ"/>
+                                    <ComboBoxItem Content="Ô tô 7 chỗ"/>
+                                    <ComboBoxItem Content="Xe bán tải / SUV"/>
+                                    <ComboBoxItem Content="Xe máy"/>
+                                </ComboBox>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Hãng xe / Dòng xe -->
+                        <StackPanel Margin="0,0,10,10">
+                            <TextBlock Text="Thương hiệu / Dòng xe" Foreground="#475569" FontSize="12" FontWeight="Medium" Margin="0,0,0,4"/>
+                            <Border BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="6" Padding="2">
+                                <TextBox Height="30" BorderThickness="0" VerticalContentAlignment="Center" Padding="8,0" FontSize="13" Background="Transparent"
+                                     Text="{Binding InputBrand, UpdateSourceTrigger=PropertyChanged}"/>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Ghi chú -->
+                        <StackPanel Margin="10,0,0,10">
+                            <TextBlock Text="Ghi chú" Foreground="#475569" FontSize="12" FontWeight="Medium" Margin="0,0,0,4"/>
+                            <Border BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="6" Padding="2">
+                                <TextBox Height="30" BorderThickness="0" VerticalContentAlignment="Center" Padding="8,0" FontSize="13" Background="Transparent"
+                                     Text="{Binding InputNote, UpdateSourceTrigger=PropertyChanged}"/>
+                            </Border>
+                        </StackPanel>
+                    </UniformGrid>
+
+                    <!-- Các nút chức năng -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                        <!-- Nút Thêm xe -->
+                        <Button Content="+ Thêm Xe Mới" 
+                            Command="{Binding AddVehicleCommand}"
+                            Width="130" Height="36" 
+                            Background="#0284C7" Foreground="White" 
+                            FontWeight="Bold" FontSize="13" BorderThickness="0" Margin="0,0,10,0">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="6"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+
+                        <!-- Nút Cập nhật -->
+                        <Button Content="Lưu / Cập Nhật" 
+                            Command="{Binding UpdateVehicleCommand}"
+                            Width="140" Height="36" 
+                            Background="#0D9488" Foreground="White" 
+                            FontWeight="Bold" FontSize="13" BorderThickness="0" Margin="0,0,10,0">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="6"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+
+                        <!-- Nút Xóa -->
+                        <Button Content="Xóa Xe" 
+                            Command="{Binding DeleteVehicleCommand}"
+                            Width="100" Height="36" 
+                            Background="#EF4444" Foreground="White" 
+                            FontWeight="Bold" FontSize="13" BorderThickness="0">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="6"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </ScrollViewer>
+</Window>
