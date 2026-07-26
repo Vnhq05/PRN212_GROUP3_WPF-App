@@ -101,6 +101,7 @@ CREATE TABLE dbo.Bookings (
     Id                 VARCHAR(50)   NOT NULL PRIMARY KEY,
     CustomerId         VARCHAR(50)   NOT NULL,
     BranchId           VARCHAR(50)   NOT NULL,
+    AssignedStaffId    VARCHAR(50)   NULL,     -- nhân viên được giao việc (Staff History)
     CustomerVehicleId  VARCHAR(50)   NULL,     -- xe cụ thể của khách (để History hiển thị xe)
     BookingDate        DATE          NOT NULL,
     ScheduledStartTime DATETIME2     NOT NULL,
@@ -115,8 +116,34 @@ CREATE TABLE dbo.Bookings (
     IsDeleted          BIT           NOT NULL DEFAULT 0,
     CONSTRAINT FK_Bookings_Users            FOREIGN KEY (CustomerId)        REFERENCES dbo.Users(Id),
     CONSTRAINT FK_Bookings_Branches         FOREIGN KEY (BranchId)          REFERENCES dbo.Branches(Id),
-    CONSTRAINT FK_Bookings_CustomerVehicles FOREIGN KEY (CustomerVehicleId) REFERENCES dbo.CustomerVehicles(Id)
+    CONSTRAINT FK_Bookings_CustomerVehicles FOREIGN KEY (CustomerVehicleId) REFERENCES dbo.CustomerVehicles(Id),
+    CONSTRAINT FK_Bookings_Users_Staff      FOREIGN KEY (AssignedStaffId)   REFERENCES dbo.Users(Id)
 );
+GO
+
+/* ---------- Bổ sung AssignedStaffId cho DB đã tạo trước đó ----------
+   Khối CREATE TABLE ở trên chỉ chạy khi bảng chưa tồn tại, nên DB cũ
+   cần ALTER thêm cột. Chạy lại nhiều lần vẫn an toàn. */
+IF COL_LENGTH('dbo.Bookings', 'AssignedStaffId') IS NULL
+BEGIN
+    ALTER TABLE dbo.Bookings ADD AssignedStaffId VARCHAR(50) NULL;
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = 'FK_Bookings_Users_Staff')
+BEGIN
+    ALTER TABLE dbo.Bookings
+        ADD CONSTRAINT FK_Bookings_Users_Staff
+        FOREIGN KEY (AssignedStaffId) REFERENCES dbo.Users(Id);
+END
+GO
+
+/* Staff mở màn hình là lọc theo AssignedStaffId + Status -> đánh index */
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+               WHERE name = 'IX_Bookings_AssignedStaffId'
+                 AND object_id = OBJECT_ID('dbo.Bookings'))
+    CREATE INDEX IX_Bookings_AssignedStaffId
+        ON dbo.Bookings (AssignedStaffId, ScheduledStartTime DESC);
 GO
 
 /* ---------- BookingServices (các dịch vụ đã chọn trong 1 booking) ---------- */
