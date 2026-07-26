@@ -23,5 +23,11 @@ namespace CarWashingSystem
         {
             InitializeComponent();
         }
+
+        private void btnAction_Click(object sender, RoutedEventArgs e)
+        {
+            var ratingPage = new RatingPage();
+            ratingPage.ShowDialog();
+        }
     }
 }
