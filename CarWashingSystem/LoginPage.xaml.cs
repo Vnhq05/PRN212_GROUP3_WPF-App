@@ -1,7 +1,16 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using CarWashingSystem.ViewModels;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 
 namespace CarWashingSystem
 {
@@ -10,21 +19,9 @@ namespace CarWashingSystem
     /// </summary>
     public partial class LoginPage : Window
     {
-        // Khởi tạo và set DataContext cho LoginPage
         public LoginPage()
         {
             InitializeComponent();
-            // Set ViewModel cho trang đăng nhập
-            this.DataContext = new LoginViewModel();
-        }
-
-        // Bắt sự kiện PasswordChanged trên PasswordBox để cập nhật Password trong ViewModel
-        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
-        {
-            if (this.DataContext is LoginViewModel vm && sender is PasswordBox pb)
-            {
-                vm.Password = pb.Password; // Gán mật khẩu trực tiếp (không hash) theo yêu cầu
-            }
         }
     }
 }
