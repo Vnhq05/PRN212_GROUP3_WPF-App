@@ -20,13 +20,52 @@
 
         <!-- Feedback List (DataGrid) -->
         <Border Grid.Row="1" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="10" Padding="20">
-            <DataGrid MinHeight="300" AutoGenerateColumns="False" CanUserAddRows="False" Background="#FAFAFA" BorderBrush="#E5E7EB" RowHeight="35" HeadersVisibility="Column">
+            <DataGrid x:Name="dgFeedback" MinHeight="300" AutoGenerateColumns="False" CanUserAddRows="False" Background="White" BorderBrush="#E2E8F0" BorderThickness="1" RowHeight="45" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F1F5F9" HeadersVisibility="Column">
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="#F8FAFC"/>
+                        <Setter Property="Foreground" Value="#475569"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="Height" Value="40"/>
+                        <Setter Property="Padding" Value="10,0"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+                <DataGrid.CellStyle>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="Padding" Value="10,0"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type DataGridCell}">
+                                    <Border Padding="{TemplateBinding Padding}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                                        <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </DataGrid.CellStyle>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Ngày" Width="100"/>
-                    <DataGridTextColumn Header="Khách Hàng" Width="150"/>
-                    <DataGridTextColumn Header="Mã Dịch Vụ" Width="100"/>
-                    <DataGridTextColumn Header="Điểm (Sao)" Width="100"/>
-                    <DataGridTextColumn Header="Bình Luận" Width="*"/>
+                    <DataGridTextColumn Header="Ngày" Binding="{Binding CreatedAt, StringFormat='dd/MM/yyyy HH:mm'}" Width="150"/>
+                    <DataGridTextColumn Header="Khách Hàng" Binding="{Binding Customer.FullName}" Width="150"/>
+                    <DataGridTextColumn Header="Mã Dịch Vụ" Binding="{Binding BookingId}" Width="120"/>
+                    <DataGridTemplateColumn Header="Điểm (Sao)" Width="120">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="⭐" Foreground="#F59E0B" FontSize="14" Margin="0,0,4,0"/>
+                                    <TextBlock Text="{Binding OverallRating}" FontWeight="Bold" Foreground="#475569"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Bình Luận" Binding="{Binding Comment}" Width="*">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="TextWrapping" Value="Wrap"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
         </Border>
@@ -35,7 +74,7 @@
         <Border Grid.Row="2" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="10" Padding="15" Margin="0,15,0,0">
             <Grid>
                 <TextBlock Text="Cảm ơn bạn đã luôn cung cấp dịch vụ tốt nhất!" VerticalAlignment="Center" Foreground="#6B7280" FontStyle="Italic"/>
-                <Button Content="Đóng Cửa Sổ" Width="120" Height="40" Background="#0284C7" Foreground="White" FontWeight="Bold" BorderThickness="0" HorizontalAlignment="Right" Cursor="Hand"/>
+                <Button Content="Quay về trang Staff" Click="btnBack_Click" Width="180" Height="40" Background="#F1F5F9" Foreground="#334155" FontWeight="Bold" BorderThickness="0" HorizontalAlignment="Right" Cursor="Hand"/>
             </Grid>
         </Border>
         
