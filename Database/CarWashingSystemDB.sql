@@ -1,20 +1,44 @@
-﻿/* =============================================================
-   CarWashingSystemDB - trích xuất từ LunaWashDB (Azure)
-   Chỉ gồm các bảng cần cho các màn hình:
-   Login, Register, Customer Profile (Add/Update/Delete car),
-   Booking, Payment, History, Feedback, Staff (History, Feedback)
-   Chạy trên: localhost\SQLEXPRESS
+/* =============================================================
+   CarWashingSystemDB - FILE DUY NHAT
+   Tao database + tao bang + do du lieu mau day du.
+
+   Luu y: file nay XOA database cu roi tao lai tu dau.
+   Chay tren: (local) hoac .\SQLEXPRESS
+
+   Cac bang: Roles, Users, CustomerVehicles, WashServices,
+             Bookings, BookingServices, Invoices, ServiceReviews
+   (Da bo hoan toan bang Branches va cot BranchId)
+
+   Tai khoan mau - mat khau tat ca deu la 123456:
+     staff1@lunawash.com     - Nhan vien
+     staff2@lunawash.com     - Nhan vien
+     customer@lunawash.com   - Khach hang (dung cho man Booking)
+     customer2@lunawash.com  - Khach hang
+     customer3@lunawash.com  - Khach hang
    ============================================================= */
 
-IF DB_ID('CarWashingSystemDB') IS NULL
-    CREATE DATABASE CarWashingSystemDB;
+USE master;
+GO
+
+IF DB_ID('CarWashingSystemDB') IS NOT NULL
+BEGIN
+    ALTER DATABASE CarWashingSystemDB SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    DROP DATABASE CarWashingSystemDB;
+END
+GO
+
+CREATE DATABASE CarWashingSystemDB;
 GO
 
 USE CarWashingSystemDB;
 GO
 
-/* ---------- Roles (Login/Register - phân quyền Customer/Staff) ---------- */
-IF OBJECT_ID('dbo.Roles') IS NULL
+
+/* =============================================================
+   PHAN 1: TAO BANG
+   ============================================================= */
+
+/* ---------- Roles: phan quyen Staff / Customer ---------- */
 CREATE TABLE dbo.Roles (
     Id          VARCHAR(50)    NOT NULL PRIMARY KEY,
     RoleName    NVARCHAR(50)   NOT NULL,
@@ -25,24 +49,7 @@ CREATE TABLE dbo.Roles (
 );
 GO
 
-/* ---------- Branches (chi nhánh - Booking cần chọn chi nhánh) ---------- */
-IF OBJECT_ID('dbo.Branches') IS NULL
-CREATE TABLE dbo.Branches (
-    Id          VARCHAR(50)    NOT NULL PRIMARY KEY,
-    BranchName  NVARCHAR(150)  NOT NULL,
-    Address     NVARCHAR(250)  NOT NULL,
-    PhoneNumber NVARCHAR(20)   NOT NULL,
-    IsActive    BIT            NOT NULL DEFAULT 1,
-    Description NVARCHAR(500)  NULL,
-    ImageUrl    NVARCHAR(MAX)  NULL,
-    CreatedAt   DATETIME2      NOT NULL DEFAULT SYSDATETIME(),
-    UpdatedAt   DATETIME2      NULL,
-    IsDeleted   BIT            NOT NULL DEFAULT 0
-);
-GO
-
-/* ---------- Users (Login / Register / Customer Profile / Staff) ---------- */
-IF OBJECT_ID('dbo.Users') IS NULL
+/* ---------- Users: dung cho Login / Register / Profile / Staff ---------- */
 CREATE TABLE dbo.Users (
     Id          VARCHAR(50)    NOT NULL PRIMARY KEY,
     FullName    NVARCHAR(150)  NOT NULL,
@@ -50,21 +57,18 @@ CREATE TABLE dbo.Users (
     PhoneNumber NVARCHAR(20)   NOT NULL,
     Password    NVARCHAR(250)  NULL,
     RoleId      VARCHAR(50)    NOT NULL,
-    BranchId    VARCHAR(50)    NULL,          -- chi nhánh làm việc (dành cho Staff)
     Address     NVARCHAR(255)  NULL,
     AvatarUrl   NVARCHAR(500)  NULL,
     IsActive    BIT            NOT NULL DEFAULT 1,
     CreatedAt   DATETIME2      NOT NULL DEFAULT SYSDATETIME(),
     UpdatedAt   DATETIME2      NULL,
     IsDeleted   BIT            NOT NULL DEFAULT 0,
-    CONSTRAINT FK_Users_Roles    FOREIGN KEY (RoleId)   REFERENCES dbo.Roles(Id),
-    CONSTRAINT FK_Users_Branches FOREIGN KEY (BranchId) REFERENCES dbo.Branches(Id),
-    CONSTRAINT UQ_Users_Email    UNIQUE (Email)
+    CONSTRAINT FK_Users_Roles FOREIGN KEY (RoleId) REFERENCES dbo.Roles(Id),
+    CONSTRAINT UQ_Users_Email UNIQUE (Email)
 );
 GO
 
-/* ---------- CustomerVehicles (Add/Update/Delete car ở Customer Profile) ---------- */
-IF OBJECT_ID('dbo.CustomerVehicles') IS NULL
+/* ---------- CustomerVehicles: xe cua khach (Profile them/sua/xoa) ---------- */
 CREATE TABLE dbo.CustomerVehicles (
     Id            VARCHAR(50)   NOT NULL PRIMARY KEY,
     CustomerId    VARCHAR(50)   NOT NULL,
@@ -72,13 +76,12 @@ CREATE TABLE dbo.CustomerVehicles (
     VehicleModel  NVARCHAR(100) NOT NULL,
     Color         NVARCHAR(50)  NULL,
     CreatedAt     DATETIME2     NOT NULL DEFAULT SYSDATETIME(),
-    IsDeleted     BIT           NOT NULL DEFAULT 0,   -- Delete car = soft delete
+    IsDeleted     BIT           NOT NULL DEFAULT 0,   -- xoa xe = xoa mem
     CONSTRAINT FK_CustomerVehicles_Users FOREIGN KEY (CustomerId) REFERENCES dbo.Users(Id)
 );
 GO
 
-/* ---------- WashServices (dịch vụ rửa xe - chọn khi Booking, giá gộp thẳng vào đây) ---------- */
-IF OBJECT_ID('dbo.WashServices') IS NULL
+/* ---------- WashServices: goi dich vu + dich vu them ---------- */
 CREATE TABLE dbo.WashServices (
     Id              VARCHAR(50)   NOT NULL PRIMARY KEY,
     ServiceName     NVARCHAR(150) NOT NULL,
@@ -95,14 +98,12 @@ CREATE TABLE dbo.WashServices (
 );
 GO
 
-/* ---------- Bookings (Booking + History) ---------- */
-IF OBJECT_ID('dbo.Bookings') IS NULL
+/* ---------- Bookings: dat lich + lich su ---------- */
 CREATE TABLE dbo.Bookings (
     Id                 VARCHAR(50)   NOT NULL PRIMARY KEY,
     CustomerId         VARCHAR(50)   NOT NULL,
-    BranchId           VARCHAR(50)   NOT NULL,
-    AssignedStaffId    VARCHAR(50)   NULL,     -- nhân viên được giao việc (Staff History)
-    CustomerVehicleId  VARCHAR(50)   NULL,     -- xe cụ thể của khách (để History hiển thị xe)
+    AssignedStaffId    VARCHAR(50)   NULL,     -- nhan vien duoc giao viec
+    CustomerVehicleId  VARCHAR(50)   NULL,
     BookingDate        DATE          NOT NULL,
     ScheduledStartTime DATETIME2     NOT NULL,
     ScheduledEndTime   DATETIME2     NOT NULL,
@@ -115,39 +116,17 @@ CREATE TABLE dbo.Bookings (
     UpdatedAt          DATETIME2     NULL,
     IsDeleted          BIT           NOT NULL DEFAULT 0,
     CONSTRAINT FK_Bookings_Users            FOREIGN KEY (CustomerId)        REFERENCES dbo.Users(Id),
-    CONSTRAINT FK_Bookings_Branches         FOREIGN KEY (BranchId)          REFERENCES dbo.Branches(Id),
-    CONSTRAINT FK_Bookings_CustomerVehicles FOREIGN KEY (CustomerVehicleId) REFERENCES dbo.CustomerVehicles(Id),
-    CONSTRAINT FK_Bookings_Users_Staff      FOREIGN KEY (AssignedStaffId)   REFERENCES dbo.Users(Id)
+    CONSTRAINT FK_Bookings_Users_Staff      FOREIGN KEY (AssignedStaffId)   REFERENCES dbo.Users(Id),
+    CONSTRAINT FK_Bookings_CustomerVehicles FOREIGN KEY (CustomerVehicleId) REFERENCES dbo.CustomerVehicles(Id)
 );
 GO
 
-/* ---------- Bổ sung AssignedStaffId cho DB đã tạo trước đó ----------
-   Khối CREATE TABLE ở trên chỉ chạy khi bảng chưa tồn tại, nên DB cũ
-   cần ALTER thêm cột. Chạy lại nhiều lần vẫn an toàn. */
-IF COL_LENGTH('dbo.Bookings', 'AssignedStaffId') IS NULL
-BEGIN
-    ALTER TABLE dbo.Bookings ADD AssignedStaffId VARCHAR(50) NULL;
-END
+/* Man Staff loc theo AssignedStaffId + thoi gian */
+CREATE INDEX IX_Bookings_AssignedStaffId
+    ON dbo.Bookings (AssignedStaffId, ScheduledStartTime DESC);
 GO
 
-IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = 'FK_Bookings_Users_Staff')
-BEGIN
-    ALTER TABLE dbo.Bookings
-        ADD CONSTRAINT FK_Bookings_Users_Staff
-        FOREIGN KEY (AssignedStaffId) REFERENCES dbo.Users(Id);
-END
-GO
-
-/* Staff mở màn hình là lọc theo AssignedStaffId + Status -> đánh index */
-IF NOT EXISTS (SELECT 1 FROM sys.indexes
-               WHERE name = 'IX_Bookings_AssignedStaffId'
-                 AND object_id = OBJECT_ID('dbo.Bookings'))
-    CREATE INDEX IX_Bookings_AssignedStaffId
-        ON dbo.Bookings (AssignedStaffId, ScheduledStartTime DESC);
-GO
-
-/* ---------- BookingServices (các dịch vụ đã chọn trong 1 booking) ---------- */
-IF OBJECT_ID('dbo.BookingServices') IS NULL
+/* ---------- BookingServices: bang noi booking <-> dich vu ---------- */
 CREATE TABLE dbo.BookingServices (
     BookingId VARCHAR(50) NOT NULL,
     ServiceId VARCHAR(50) NOT NULL,
@@ -157,15 +136,14 @@ CREATE TABLE dbo.BookingServices (
 );
 GO
 
-/* ---------- Invoices (Payment) ---------- */
-IF OBJECT_ID('dbo.Invoices') IS NULL
+/* ---------- Invoices: hoa don thanh toan ---------- */
 CREATE TABLE dbo.Invoices (
     Id             VARCHAR(50)   NOT NULL PRIMARY KEY,
     BookingId      VARCHAR(50)   NOT NULL,
     OriginalAmount DECIMAL(18,2) NOT NULL,
     DiscountAmount DECIMAL(18,2) NOT NULL DEFAULT 0,
     FinalAmount    DECIMAL(18,2) NOT NULL,
-    PaymentMethod  NVARCHAR(50)  NOT NULL,   -- Cash / Card / Momo / VNPay ...
+    PaymentMethod  NVARCHAR(50)  NOT NULL,   -- Cash / Momo / Card
     PaymentStatus  NVARCHAR(50)  NOT NULL DEFAULT N'Unpaid', -- Unpaid / Paid / Refunded
     PaymentTime    DATETIME2     NULL,
     CreatedAt      DATETIME2     NOT NULL DEFAULT SYSDATETIME(),
@@ -175,72 +153,171 @@ CREATE TABLE dbo.Invoices (
 );
 GO
 
-/* ---------- ServiceReviews (Feedback: khách gửi, staff xem & trả lời) ---------- */
-IF OBJECT_ID('dbo.ServiceReviews') IS NULL
+/* ---------- ServiceReviews: khach danh gia, staff tra loi ---------- */
 CREATE TABLE dbo.ServiceReviews (
     Id                VARCHAR(50)    NOT NULL PRIMARY KEY,
     BookingId         VARCHAR(50)    NOT NULL,
     CustomerId        VARCHAR(50)    NOT NULL,
-    BranchId          VARCHAR(50)    NOT NULL,
     OverallRating     FLOAT          NOT NULL,
     CleanlinessRating INT            NOT NULL DEFAULT 0,
     SpeedRating       INT            NOT NULL DEFAULT 0,
     StaffRating       INT            NOT NULL DEFAULT 0,
     Comment           NVARCHAR(1000) NULL,
-    ResponseText      NVARCHAR(1000) NULL,    -- staff trả lời feedback
+    ResponseText      NVARCHAR(1000) NULL,    -- staff tra loi
     RespondedById     VARCHAR(50)    NULL,
     RespondedAt       DATETIME2      NULL,
     CreatedAt         DATETIME2      NULL DEFAULT SYSDATETIME(),
     CONSTRAINT FK_ServiceReviews_Bookings          FOREIGN KEY (BookingId)     REFERENCES dbo.Bookings(Id),
     CONSTRAINT FK_ServiceReviews_Users             FOREIGN KEY (CustomerId)    REFERENCES dbo.Users(Id),
-    CONSTRAINT FK_ServiceReviews_Branches          FOREIGN KEY (BranchId)      REFERENCES dbo.Branches(Id),
     CONSTRAINT FK_ServiceReviews_Users_RespondedBy FOREIGN KEY (RespondedById) REFERENCES dbo.Users(Id)
 );
 GO
 
-/* Dữ liệu tham chiếu + tài khoản mẫu: chạy tiếp file 02_SeedData.sql */
 
-/* Seed data trich xuat tu LunaWashDB (Azure) - generated 2026-07-22 */
-USE CarWashingSystemDB;
-GO
+/* =============================================================
+   PHAN 2: DU LIEU MAU
+   ============================================================= */
 
-/* ---------- Roles (5 rows) ---------- */
-IF NOT EXISTS (SELECT 1 FROM dbo.Roles)
+/* ---------- Roles (2) ---------- */
 INSERT INTO dbo.Roles (Id, RoleName, Description) VALUES
-(N'ROL-01', N'Admin', N'Quan tri vien toan he thong'),
-(N'ROL-02', N'Staff', N'Nhan vien chi nhanh ho tro check-in'),
-(N'ROL-03', N'Customer', N'Khach hang su dung dich vu'),
-(N'ROL-04', N'BranchManager', NULL),
-(N'ROL-05', N'TechnicalStaff', N'Technical and maintenance staff');
+(N'ROL-STAFF', N'Staff',    N'Nhan vien rua xe'),
+(N'ROL-CUST',  N'Customer', N'Khach hang su dung dich vu');
 GO
 
-/* ---------- Branches (5 rows) ---------- */
-IF NOT EXISTS (SELECT 1 FROM dbo.Branches)
-INSERT INTO dbo.Branches (Id, BranchName, Address, PhoneNumber, IsActive, Description, ImageUrl) VALUES
-(N'BRN-LD-01', N'LunaWash Linh Đông', N'Thủ Đức, HCM', N'0900000001', 1, NULL, NULL),
-(N'BRN-Q1-01', N'LunaWash Quận 1', N'123 Lê Lợi, Bến Thành', N'02838383838', 1, NULL, NULL),
-(N'BRN-Q7-01', N'LunaWash Quận 7', N'456 Nguyễn Văn Linh', N'0900000003', 1, NULL, NULL),
-(N'BRN-TB-01', N'LunaWash Tân Bình', N'789 Cộng Hòa, Phường 13', N'0900000004', 1, NULL, NULL),
-(N'BRN-TTH-01', N'LunaWash Tân Thới Hiệp', N'Quận 12, HCM', N'0900000002', 1, NULL, NULL);
+/* ---------- Users (2 staff + 3 khach) - mat khau: 123456 ---------- */
+INSERT INTO dbo.Users (Id, FullName, Email, PhoneNumber, Password, RoleId, Address) VALUES
+(N'USR-STAFF-01', N'Nguyễn Văn Sáng', N'staff1@lunawash.com',    N'0911000001', N'123456', N'ROL-STAFF', N'12 Lê Lợi, Quận 1'),
+(N'USR-STAFF-02', N'Trần Thị Mai',    N'staff2@lunawash.com',    N'0911000002', N'123456', N'ROL-STAFF', N'45 Cộng Hòa, Tân Bình'),
+(N'USR-CUST-01',  N'Lê Minh Khang',   N'customer@lunawash.com',  N'0922000001', N'123456', N'ROL-CUST',  N'88 Nguyễn Huệ, Quận 1'),
+(N'USR-CUST-02',  N'Phạm Thu Hà',     N'customer2@lunawash.com', N'0922000002', N'123456', N'ROL-CUST',  N'23 Phan Xích Long, Phú Nhuận'),
+(N'USR-CUST-03',  N'Đỗ Quốc Bảo',     N'customer3@lunawash.com', N'0922000003', N'123456', N'ROL-CUST',  N'7 Nguyễn Văn Linh, Quận 7');
 GO
 
-/* ---------- WashServices (7 rows - gia lay theo bang gia o to 4 cho cua LunaWashDB) ---------- */
-IF NOT EXISTS (SELECT 1 FROM dbo.WashServices)
+/* ---------- CustomerVehicles (7, trong do 1 xe da xoa mem) ---------- */
+INSERT INTO dbo.CustomerVehicles (Id, CustomerId, LicensePlate, VehicleModel, Color, IsDeleted) VALUES
+(N'VEH-CUST01-01', N'USR-CUST-01', N'51A-123.45',  N'Toyota Vios',   N'Trắng', 0),
+(N'VEH-CUST01-02', N'USR-CUST-01', N'51G-678.90',  N'Honda CR-V',    N'Đen',   0),
+(N'VEH-CUST01-03', N'USR-CUST-01', N'59F1-234.56', N'Ford Ranger',   N'Xám',   0),
+(N'VEH-CUST01-04', N'USR-CUST-01', N'51B-000.11',  N'Kia Morning',   N'Đỏ',    1),  -- da xoa mem, KHONG hien tren Booking
+(N'VEH-CUST02-01', N'USR-CUST-02', N'30A-555.66',  N'Mazda CX-5',    N'Xanh',  0),
+(N'VEH-CUST02-02', N'USR-CUST-02', N'30F-777.88',  N'Hyundai Accent',N'Bạc',   0),
+(N'VEH-CUST03-01', N'USR-CUST-03', N'92A-321.65',  N'Mitsubishi Xpander', N'Nâu', 0);
+GO
+
+/* ---------- WashServices (10, trong do 1 goi ngung ban) ---------- */
 INSERT INTO dbo.WashServices (Id, ServiceName, Description, ServiceType, Price, DurationMinutes, IconName, IsPopular, IsActive) VALUES
-(N'SRV-03A4A5FB', N'Vệ Sinh Đệm Ghế Da', N'Sử dụng dung dịch chuyên dụng làm sạch sâu và dưỡng mềm ghế da.', N'AddOn', 500000.00, 60, N'airline_seat_recline_normal', 0, 1),
-(N'SRV-6A03D6A1', N'Cơ Bản', N'Rửa sạch ngoại thất , làm khô tự động', N'Package', 149000.00, 15, N'water_drop', 0, 1),
-(N'SRV-8155020C', N'Tẩy Ố Mốc Kính', N'Tẩy sạch cặn canxi, ố mốc lâu ngày trên kính xe, trả lại sự trong suốt.', N'AddOn', 250000.00, 30, N'cleaning_services', 0, 1),
-(N'SRV-A065CEEF', N'Nâng cao', N'Dịch vụ cơ bản kết hợp vệ sinh gầm và tẩy ố Lazang', N'Package', 249000.00, 20, N'cool_to_dry', 1, 1),
-(N'SRV-BD30884F', N'Cao cấp', N'Rủa xe toàn diện với phủ Nano Creramic bảo vệ sơn xe', N'Package', 499000.00, 30, N'diamond', 0, 1),
-(N'SRV-E71A770B', N'Phủ Nano Kính', N'Phủ Nano kính lái và kính sườn, hiệu ứng lá sen chống bám nước mưa.', N'AddOn', 350000.00, 30, N'blur_on', 0, 1),
-(N'SRV-E7442245', N'Thay Dầu / Nhớt', N'Thay nhớt động cơ cao cấp, kiểm tra lốp và làm sạch lọc nhớt.', N'AddOn', 450000.00, 30, N'oil_barrel', 1, 1);
+-- 2 goi dung cho 2 RadioButton o man Booking
+(N'SRV-STANDARD', N'Rửa tiêu chuẩn', N'Rửa sạch ngoại thất, làm khô tự động.',              N'Package',  50000.00, 30, N'water_drop',  0, 1),
+(N'SRV-PREMIUM',  N'Rửa cao cấp',    N'Rửa toàn diện, vệ sinh nội thất và phủ bóng sơn.',   N'Package', 100000.00, 45, N'diamond',     1, 1),
+-- cac goi khac
+(N'SRV-BASIC',    N'Cơ Bản',         N'Rửa sạch ngoại thất, làm khô tự động.',              N'Package', 149000.00, 15, N'water_drop',  0, 1),
+(N'SRV-ADVANCED', N'Nâng cao',       N'Dịch vụ cơ bản kết hợp vệ sinh gầm và tẩy ố lazang.',N'Package', 249000.00, 20, N'cool_to_dry', 1, 1),
+(N'SRV-DELUXE',   N'Cao cấp',        N'Rửa xe toàn diện với phủ Nano Ceramic bảo vệ sơn.',  N'Package', 499000.00, 30, N'diamond',     0, 1),
+(N'SRV-OLDPACK',  N'Gói cũ ngừng bán', N'Gói đã ngừng kinh doanh.',                         N'Package', 300000.00, 40, N'block',       0, 0),  -- IsActive = 0
+-- dich vu them
+(N'SRV-SEAT',     N'Vệ Sinh Đệm Ghế Da', N'Làm sạch sâu và dưỡng mềm ghế da.',              N'AddOn',   500000.00, 60, N'airline_seat_recline_normal', 0, 1),
+(N'SRV-GLASS',    N'Tẩy Ố Mốc Kính', N'Tẩy cặn canxi, ố mốc lâu ngày trên kính xe.',        N'AddOn',   250000.00, 30, N'cleaning_services', 0, 1),
+(N'SRV-NANO',     N'Phủ Nano Kính',  N'Phủ Nano kính lái và kính sườn, chống bám nước mưa.',N'AddOn',   350000.00, 30, N'blur_on',     0, 1),
+(N'SRV-OIL',      N'Thay Dầu / Nhớt',N'Thay nhớt động cơ, kiểm tra lốp và lọc nhớt.',       N'AddOn',   450000.00, 30, N'oil_barrel',  1, 1);
 GO
 
-/* ---------- Tai khoan mau de test Login ---------- */
-IF NOT EXISTS (SELECT 1 FROM dbo.Users)
-INSERT INTO dbo.Users (Id, FullName, Email, PhoneNumber, Password, RoleId, BranchId)
+/* ---------- Bookings (8, du cac trang thai) ---------- */
+INSERT INTO dbo.Bookings
+    (Id, CustomerId, AssignedStaffId, CustomerVehicleId, BookingDate,
+     ScheduledStartTime, ScheduledEndTime, Status, CheckInTime, CheckoutTime, TotalPrice, Notes)
 VALUES
-('USR-ADMIN-01', N'Quản trị viên',    'admin@lunawash.com',    '0900000001', N'123456', 'ROL-01', NULL),
-('USR-STAFF-01', N'Nhân viên Quận 1', 'staff@lunawash.com',    '0900000002', N'123456', 'ROL-02', 'BRN-Q1-01'),
-('USR-CUST-01',  N'Khách hàng Demo',  'customer@lunawash.com', '0900000003', N'123456', 'ROL-03', NULL);
+-- Da hoan thanh, da thanh toan, da co danh gia
+(N'BKG-0001', N'USR-CUST-01', N'USR-STAFF-01', N'VEH-CUST01-01', '2026-07-20',
+ '2026-07-20T09:00:00', '2026-07-20T09:30:00', N'Completed', '2026-07-20T08:55:00', '2026-07-20T09:35:00',  50000.00, N'Khách quen'),
+
+(N'BKG-0002', N'USR-CUST-01', N'USR-STAFF-02', N'VEH-CUST01-02', '2026-07-22',
+ '2026-07-22T14:00:00', '2026-07-22T14:45:00', N'Completed', '2026-07-22T13:58:00', '2026-07-22T14:50:00', 100000.00, NULL),
+
+(N'BKG-0003', N'USR-CUST-02', N'USR-STAFF-01', N'VEH-CUST02-01', '2026-07-24',
+ '2026-07-24T10:00:00', '2026-07-24T11:00:00', N'Completed', '2026-07-24T09:57:00', '2026-07-24T11:05:00', 350000.00, N'Có mua thêm phủ nano'),
+
+-- Da thanh toan, cho toi ngay lam
+(N'BKG-0004', N'USR-CUST-02', N'USR-STAFF-02', N'VEH-CUST02-02', '2026-07-30',
+ '2026-07-30T08:30:00', '2026-07-30T09:15:00', N'Confirmed', NULL, NULL, 100000.00, NULL),
+
+-- Dang rua
+(N'BKG-0005', N'USR-CUST-03', N'USR-STAFF-01', N'VEH-CUST03-01', '2026-07-27',
+ '2026-07-27T15:00:00', '2026-07-27T15:30:00', N'InProgress', '2026-07-27T14:58:00', NULL, 50000.00, NULL),
+
+-- CHUA THANH TOAN - dung 2 don nay de test man Payment
+(N'BKG-0006', N'USR-CUST-01', NULL, N'VEH-CUST01-03', '2026-07-29',
+ '2026-07-29T09:30:00', '2026-07-29T10:00:00', N'Pending', NULL, NULL,  50000.00, NULL),
+
+(N'BKG-0007', N'USR-CUST-03', NULL, N'VEH-CUST03-01', '2026-07-31',
+ '2026-07-31T16:00:00', '2026-07-31T16:45:00', N'Pending', NULL, NULL, 100000.00, N'Gọi trước 15 phút'),
+
+-- Da huy
+(N'BKG-0008', N'USR-CUST-02', N'USR-STAFF-02', N'VEH-CUST02-01', '2026-07-18',
+ '2026-07-18T11:00:00', '2026-07-18T11:30:00', N'Cancelled', NULL, NULL, 50000.00, N'Khách bận đột xuất');
+GO
+
+/* ---------- BookingServices: dich vu cua tung don ---------- */
+INSERT INTO dbo.BookingServices (BookingId, ServiceId) VALUES
+(N'BKG-0001', N'SRV-STANDARD'),
+(N'BKG-0002', N'SRV-PREMIUM'),
+(N'BKG-0003', N'SRV-PREMIUM'),
+(N'BKG-0003', N'SRV-NANO'),      -- don nay mua them phu nano
+(N'BKG-0004', N'SRV-PREMIUM'),
+(N'BKG-0005', N'SRV-STANDARD'),
+(N'BKG-0006', N'SRV-STANDARD'),
+(N'BKG-0007', N'SRV-PREMIUM'),
+(N'BKG-0008', N'SRV-STANDARD');
+GO
+
+/* ---------- Invoices: chi cac don da thanh toan / dang cho ---------- */
+INSERT INTO dbo.Invoices
+    (Id, BookingId, OriginalAmount, DiscountAmount, FinalAmount, PaymentMethod, PaymentStatus, PaymentTime)
+VALUES
+(N'INV-0001', N'BKG-0001',  50000.00,     0.00,  50000.00, N'Cash', N'Paid',   '2026-07-20T09:36:00'),
+(N'INV-0002', N'BKG-0002', 100000.00,     0.00, 100000.00, N'Momo', N'Paid',   '2026-07-22T14:51:00'),
+(N'INV-0003', N'BKG-0003', 350000.00, 50000.00, 300000.00, N'Card', N'Paid',   '2026-07-24T11:06:00'),
+(N'INV-0004', N'BKG-0004', 100000.00,     0.00, 100000.00, N'Momo', N'Paid',   '2026-07-25T20:10:00'),
+(N'INV-0005', N'BKG-0005',  50000.00,     0.00,  50000.00, N'Cash', N'Unpaid', NULL);
+GO
+
+/* ---------- ServiceReviews: danh gia cua khach ---------- */
+INSERT INTO dbo.ServiceReviews
+    (Id, BookingId, CustomerId, OverallRating, CleanlinessRating, SpeedRating, StaffRating,
+     Comment, ResponseText, RespondedById, RespondedAt, CreatedAt)
+VALUES
+(N'REV-0001', N'BKG-0001', N'USR-CUST-01', 5.0, 5, 5, 5,
+ N'Xe sạch, nhân viên thân thiện. Rất hài lòng!',
+ N'Cảm ơn anh đã tin tưởng dịch vụ của LunaWash ạ!', N'USR-STAFF-01', '2026-07-20T18:00:00', '2026-07-20T10:00:00'),
+
+(N'REV-0002', N'BKG-0002', N'USR-CUST-01', 4.0, 4, 3, 5,
+ N'Rửa kỹ nhưng chờ hơi lâu.',
+ NULL, NULL, NULL, '2026-07-22T15:30:00'),
+
+(N'REV-0003', N'BKG-0003', N'USR-CUST-02', 4.5, 5, 4, 4,
+ N'Phủ nano rất đẹp, sẽ quay lại.',
+ N'Cảm ơn chị, hẹn gặp lại ạ!', N'USR-STAFF-01', '2026-07-25T09:00:00', '2026-07-24T12:00:00');
+GO
+
+
+/* =============================================================
+   PHAN 3: KIEM TRA
+   ============================================================= */
+
+SELECT 'Roles' AS Bang, COUNT(*) AS SoDong FROM dbo.Roles
+UNION ALL SELECT 'Users',            COUNT(*) FROM dbo.Users
+UNION ALL SELECT 'CustomerVehicles', COUNT(*) FROM dbo.CustomerVehicles
+UNION ALL SELECT 'WashServices',     COUNT(*) FROM dbo.WashServices
+UNION ALL SELECT 'Bookings',         COUNT(*) FROM dbo.Bookings
+UNION ALL SELECT 'BookingServices',  COUNT(*) FROM dbo.BookingServices
+UNION ALL SELECT 'Invoices',         COUNT(*) FROM dbo.Invoices
+UNION ALL SELECT 'ServiceReviews',   COUNT(*) FROM dbo.ServiceReviews;
+GO
+
+/* Don cho thanh toan - dung de test man Payment */
+SELECT b.Id, u.FullName, v.LicensePlate, b.ScheduledStartTime, b.Status, b.TotalPrice
+FROM dbo.Bookings b
+JOIN dbo.Users u ON u.Id = b.CustomerId
+LEFT JOIN dbo.CustomerVehicles v ON v.Id = b.CustomerVehicleId
+WHERE b.Status = N'Pending'
+ORDER BY b.ScheduledStartTime;
 GO

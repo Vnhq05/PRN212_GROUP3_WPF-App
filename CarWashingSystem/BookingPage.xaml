@@ -80,15 +80,16 @@
                 <!-- 3. Gói dịch vụ -->
                 <TextBlock Text="3. Chọn gói dịch vụ:" FontSize="13" Foreground="#4B5563" Margin="0,0,0,5" FontWeight="SemiBold"/>
                 <StackPanel Margin="0,0,0,15">
-                    <RadioButton Name="rbBasic" Content="Rửa tiêu chuẩn (50.000đ)" FontSize="13" Foreground="#374151" Margin="0,0,0,8" />
-                    <RadioButton Name="rbPremium" Content="Rửa cao cấp (100.000đ)" FontSize="13" Foreground="#374151" />
+                    <RadioButton Name="rbBasic" GroupName="Service" Content="Rửa tiêu chuẩn (50.000đ)" FontSize="13" Foreground="#374151" Margin="0,0,0,8" />
+                    <RadioButton Name="rbPremium" GroupName="Service" Content="Rửa cao cấp (100.000đ)" FontSize="13" Foreground="#374151" />
                 </StackPanel>
 
-                <!-- 4. Thanh toán -->
+                <!-- Khoảng cách trước nút xác nhận -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,25"/>
 
                 <!-- Nút Xác nhận: Đã áp dụng Style bo góc và màu #0284C7 -->
-                <Button Name="btnConfirm" Content="Xác Nhận Đặt Lịch" Height="42" 
+                <Button Name="btnConfirm" Content="Xác Nhận Đặt Lịch" Height="42"
+                        Click="btnConfirm_Click"
                         Style="{StaticResource RoundedButtonStyle}" />
 
             </StackPanel>

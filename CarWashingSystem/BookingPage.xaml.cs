@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CarWashingSystem.Entities;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace CarWashingSystem
 {
@@ -19,9 +8,135 @@ namespace CarWashingSystem
     /// </summary>
     public partial class BookingPage : Window
     {
+        private CarWashingSystemDbContext _db;
+
+        // TODO: thay bang user dang dang nhap khi LoginPage hoan thanh
+        private const string CurrentCustomerId = "USR-CUST-01";
+
+        // Id 2 goi dich vu trong bang WashServices, ung voi 2 RadioButton
+        private const string SrvStandardId = "SRV-STANDARD";  // Rua tieu chuan - 50.000d  - 30 phut
+        private const string SrvPremiumId = "SRV-PREMIUM";    // Rua cao cap    - 100.000d - 45 phut
+
         public BookingPage()
         {
             InitializeComponent();
+            _db = new();
+
+            LoadCars();
+            LoadTimeSlots();
+
+            dpDate.SelectedDate = DateTime.Today;
+        }
+
+        private void LoadCars()
+        {
+            var cars = _db.CustomerVehicles
+                .Where(v => v.CustomerId == CurrentCustomerId && !v.IsDeleted)
+                .ToList();
+
+            cmbCars.ItemsSource = cars;
+            cmbCars.DisplayMemberPath = "LicensePlate";
+            cmbCars.SelectedValuePath = "Id";
+            cmbCars.SelectedIndex = 0;
+        }
+
+        // Sinh khung gio 08:00 -> 17:30, moi 30 phut
+        private void LoadTimeSlots()
+        {
+            var slots = new List<string>();
+            for (int h = 8; h <= 17; h++)
+            {
+                slots.Add($"{h:00}:00");
+                slots.Add($"{h:00}:30");
+            }
+
+            cmbTime.ItemsSource = slots;
+            cmbTime.SelectedIndex = 0;
+        }
+
+        private void btnConfirm_Click(object sender, RoutedEventArgs e)
+        {
+            if (cmbCars.SelectedValue == null)
+            {
+                MessageBox.Show("Bạn chưa có xe nào. Vui lòng thêm xe ở trang Cá nhân.", "Thiếu thông tin",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (dpDate.SelectedDate == null)
+            {
+                MessageBox.Show("Vui lòng chọn ngày.", "Thiếu thông tin",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (cmbTime.SelectedItem is not string timeText)
+            {
+                MessageBox.Show("Vui lòng chọn giờ.", "Thiếu thông tin",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (rbBasic.IsChecked != true && rbPremium.IsChecked != true)
+            {
+                MessageBox.Show("Vui lòng chọn gói dịch vụ.", "Thiếu thông tin",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            string serviceId;
+            if (rbBasic.IsChecked == true)
+            {
+                serviceId = SrvStandardId;
+            }
+            else
+            {
+                serviceId = SrvPremiumId;
+            }
+
+            var service = _db.WashServices.FirstOrDefault(s => s.Id == serviceId);
+            if (service == null)
+            {
+                MessageBox.Show("Không tìm thấy gói dịch vụ trong hệ thống.", "Lỗi dữ liệu",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            DateTime date = dpDate.SelectedDate.Value;
+            string[] parts = timeText.Split(':');
+            DateTime start = date.AddHours(int.Parse(parts[0]))
+                                 .AddMinutes(int.Parse(parts[1]));
+
+            if (start < DateTime.Now)
+            {
+                MessageBox.Show("Không thể đặt lịch vào thời điểm đã qua.", "Ngày giờ không hợp lệ",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var booking = new Booking
+            {
+                Id = "BKG-" + DateTime.Now.ToString("yyyyMMddHHmmss"),
+                CustomerId = CurrentCustomerId,
+                CustomerVehicleId = (string)cmbCars.SelectedValue,
+                BookingDate = DateOnly.FromDateTime(date),
+                ScheduledStartTime = start,
+                ScheduledEndTime = start.AddMinutes(service.DurationMinutes),
+                Status = "Pending",
+                TotalPrice = service.Price
+            };
+
+
+            booking.Services.Add(service);
+            _db.Bookings.Add(booking);
+            _db.SaveChanges();
+
+            MessageBox.Show($"Đặt lịch thành công!\nMã đặt lịch: {booking.Id}", "Thành công",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+
+            // Truyen ma don sang man hinh Payment
+            new Payment(booking.Id).Show();
+            this.Close();
         }
     }
 }
