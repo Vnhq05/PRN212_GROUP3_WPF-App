@@ -42,36 +42,43 @@
                 <!-- Ô nhập Tên đăng nhập / Số điện thoại -->
                 <TextBlock Text="Tên đăng nhập / SĐT" Foreground="#475569" FontSize="12" FontWeight="Medium" Margin="0,0,0,5"/>
                 <Border BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="6" Margin="0,0,0,15" Padding="2">
-                    <TextBox Height="35" 
-                         BorderThickness="0" 
-                         VerticalContentAlignment="Center" 
-                         Padding="8,0" 
-                         FontSize="14" 
-                         Background="Transparent"
-                         Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox x:Name="txtUsername"
+                      Height="35" 
+                      BorderThickness="0" 
+                      VerticalContentAlignment="Center" 
+                      Padding="8,0" 
+                      FontSize="14" 
+                      Background="Transparent"/>
                 </Border>
 
                 <!-- Ô nhập Mật khẩu -->
                 <TextBlock Text="Mật khẩu" Foreground="#475569" FontSize="12" FontWeight="Medium" Margin="0,0,0,5"/>
                 <Border BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="6" Margin="0,0,0,20" Padding="2">
-                    <PasswordBox Height="35" 
-                             BorderThickness="0" 
-                             VerticalContentAlignment="Center" 
-                             Padding="8,0" 
-                             FontSize="14" 
-                             Background="Transparent"/>
+                    <PasswordBox x:Name="txtPassword"
+                       Height="35" 
+                       BorderThickness="0" 
+                       VerticalContentAlignment="Center" 
+                       Padding="8,0" 
+                       FontSize="14" 
+                       Background="Transparent"/>
                 </Border>
-
+                <!--Dòng hiện lỗi-->
+                <TextBlock x:Name="txtError"
+                    Text="" 
+                    Foreground="Red" 
+                    FontSize="12" 
+                    TextWrapping="Wrap"
+                    Margin="0,-10,0,10"/>
                 <!-- Nút Đăng nhập -->
                 <Button Content="Đăng Nhập" 
-                    Command="{Binding LoginCommand}"
-                    Height="40" 
-                    Background="#0284C7" 
-                    Foreground="White" 
-                    FontSize="14" 
-                    FontWeight="Bold" 
-                    BorderThickness="0" 
-                    Margin="0,0,0,15">
+                      Click="BtnLogin_Click"
+                      Height="40" 
+                      Background="#0284C7" 
+                      Foreground="White" 
+                      FontSize="14" 
+                      FontWeight="Bold" 
+                      BorderThickness="0" 
+                      Margin="0,0,0,15">
                     <Button.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="6"/>
@@ -83,13 +90,13 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock Text="Chưa có tài khoản? " Foreground="#64748B" FontSize="12"/>
                     <Button Content="Đăng ký ngay" 
-                        Command="{Binding SwitchToRegisterCommand}"
-                        Background="Transparent" 
-                        Foreground="#0284C7" 
-                        FontWeight="Bold" 
-                        BorderThickness="0" 
-                        Cursor="Hand" 
-                        FontSize="12"/>
+                       Click="BtnSwitchToRegister_Click"
+                       Background="Transparent" 
+                       Foreground="#0284C7" 
+                       FontWeight="Bold" 
+                       BorderThickness="0" 
+                       Cursor="Hand" 
+                       FontSize="12"/>
                 </StackPanel>
             </StackPanel>
         </Border>
