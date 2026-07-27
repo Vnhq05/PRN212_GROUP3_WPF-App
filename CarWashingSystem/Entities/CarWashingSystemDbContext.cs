@@ -18,6 +18,8 @@ public partial class CarWashingSystemDbContext : DbContext
 
     public virtual DbSet<Booking> Bookings { get; set; }
 
+    public virtual DbSet<Branch> Branches { get; set; }
+
     public virtual DbSet<CustomerVehicle> CustomerVehicles { get; set; }
 
     public virtual DbSet<Invoice> Invoices { get; set; }
@@ -30,27 +32,28 @@ public partial class CarWashingSystemDbContext : DbContext
 
     public virtual DbSet<WashService> WashServices { get; set; }
 
-    private string GetConnectionString()
+    protected override void OnConfiguring(
+    DbContextOptionsBuilder optionsBuilder)
     {
         IConfiguration config = new ConfigurationBuilder()
-             .SetBasePath(AppContext.BaseDirectory)
-                    .AddJsonFile("appsettings.json", false, true)
-                    .Build();
-        var strConn = config["ConnectionStrings:DefaultConnection"];
+            .SetBasePath(AppContext.BaseDirectory)
+            .AddJsonFile(
+                "appsettings.json",
+                optional: false,
+                reloadOnChange: true)
+            .Build();
 
-        return strConn!;
+        string? strConn = config["ConnectionStrings:DefaultConnection"];
+
+        optionsBuilder.UseSqlServer(strConn);
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseSqlServer(GetConnectionString());
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Booking>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Bookings__3214EC076C3199A2");
+            entity.HasKey(e => e.Id).HasName("PK__Bookings__3214EC0716A9C57D");
 
             entity.HasIndex(e => new { e.AssignedStaffId, e.ScheduledStartTime }, "IX_Bookings_AssignedStaffId").IsDescending(false, true);
 
@@ -58,6 +61,9 @@ public partial class CarWashingSystemDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.AssignedStaffId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.BranchId)
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysdatetime())");
@@ -75,6 +81,11 @@ public partial class CarWashingSystemDbContext : DbContext
             entity.HasOne(d => d.AssignedStaff).WithMany(p => p.BookingAssignedStaffs)
                 .HasForeignKey(d => d.AssignedStaffId)
                 .HasConstraintName("FK_Bookings_Users_Staff");
+
+            entity.HasOne(d => d.Branch).WithMany(p => p.Bookings)
+                .HasForeignKey(d => d.BranchId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Bookings_Branches");
 
             entity.HasOne(d => d.Customer).WithMany(p => p.BookingCustomers)
                 .HasForeignKey(d => d.CustomerId)
@@ -109,9 +120,24 @@ public partial class CarWashingSystemDbContext : DbContext
                     });
         });
 
+        modelBuilder.Entity<Branch>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Branches__3214EC07C271A3E3");
+
+            entity.Property(e => e.Id)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Address).HasMaxLength(250);
+            entity.Property(e => e.BranchName).HasMaxLength(150);
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysdatetime())");
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.PhoneNumber).HasMaxLength(20);
+        });
+
         modelBuilder.Entity<CustomerVehicle>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Customer__3214EC07B65805A1");
+            entity.HasKey(e => e.Id).HasName("PK__Customer__3214EC075A6E3F6F");
 
             entity.Property(e => e.Id)
                 .HasMaxLength(50)
@@ -132,7 +158,7 @@ public partial class CarWashingSystemDbContext : DbContext
 
         modelBuilder.Entity<Invoice>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Invoices__3214EC07BCA8D9BD");
+            entity.HasKey(e => e.Id).HasName("PK__Invoices__3214EC07FDA4AE7C");
 
             entity.Property(e => e.Id)
                 .HasMaxLength(50)
@@ -157,7 +183,7 @@ public partial class CarWashingSystemDbContext : DbContext
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Roles__3214EC07CEFE002B");
+            entity.HasKey(e => e.Id).HasName("PK__Roles__3214EC0732D591FE");
 
             entity.Property(e => e.Id)
                 .HasMaxLength(50)
@@ -169,12 +195,15 @@ public partial class CarWashingSystemDbContext : DbContext
 
         modelBuilder.Entity<ServiceReview>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__ServiceR__3214EC077ECFADC7");
+            entity.HasKey(e => e.Id).HasName("PK__ServiceR__3214EC074058BFE9");
 
             entity.Property(e => e.Id)
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.BookingId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.BranchId)
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.Comment).HasMaxLength(1000);
@@ -192,6 +221,11 @@ public partial class CarWashingSystemDbContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ServiceReviews_Bookings");
 
+            entity.HasOne(d => d.Branch).WithMany(p => p.ServiceReviews)
+                .HasForeignKey(d => d.BranchId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ServiceReviews_Branches");
+
             entity.HasOne(d => d.Customer).WithMany(p => p.ServiceReviewCustomers)
                 .HasForeignKey(d => d.CustomerId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -204,7 +238,7 @@ public partial class CarWashingSystemDbContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Users__3214EC07F9FA64D2");
+            entity.HasKey(e => e.Id).HasName("PK__Users__3214EC0790601188");
 
             entity.HasIndex(e => e.Email, "UQ_Users_Email").IsUnique();
 
@@ -213,6 +247,9 @@ public partial class CarWashingSystemDbContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.Address).HasMaxLength(255);
             entity.Property(e => e.AvatarUrl).HasMaxLength(500);
+            entity.Property(e => e.BranchId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysdatetime())");
             entity.Property(e => e.Email).HasMaxLength(150);
             entity.Property(e => e.FullName).HasMaxLength(150);
@@ -223,6 +260,10 @@ public partial class CarWashingSystemDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false);
 
+            entity.HasOne(d => d.Branch).WithMany(p => p.Users)
+                .HasForeignKey(d => d.BranchId)
+                .HasConstraintName("FK_Users_Branches");
+
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -231,7 +272,7 @@ public partial class CarWashingSystemDbContext : DbContext
 
         modelBuilder.Entity<WashService>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__WashServ__3214EC073B84664D");
+            entity.HasKey(e => e.Id).HasName("PK__WashServ__3214EC077A4AFFEB");
 
             entity.Property(e => e.Id)
                 .HasMaxLength(50)

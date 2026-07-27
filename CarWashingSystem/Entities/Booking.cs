@@ -9,6 +9,10 @@ public partial class Booking
 
     public string CustomerId { get; set; } = null!;
 
+    public string BranchId { get; set; } = null!;
+
+    public string? AssignedStaffId { get; set; }
+
     public string? CustomerVehicleId { get; set; }
 
     public DateOnly BookingDate { get; set; }
@@ -33,9 +37,9 @@ public partial class Booking
 
     public bool IsDeleted { get; set; }
 
-    public string? AssignedStaffId { get; set; }
-
     public virtual User? AssignedStaff { get; set; }
+
+    public virtual Branch Branch { get; set; } = null!;
 
     public virtual User Customer { get; set; } = null!;
 
