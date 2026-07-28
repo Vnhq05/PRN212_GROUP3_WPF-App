@@ -2,6 +2,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using CarWashingSystem.Entities;
+using CarWashingSystem.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace CarWashingSystem
@@ -66,6 +67,16 @@ namespace CarWashingSystem
         {
             FeedbackWindow fw = new FeedbackWindow();
             fw.Show();
+            this.Close();
+        }
+
+        private void btnLogout_Click(object sender, RoutedEventArgs e)
+        {
+            // Clear session and return to login page
+            SessionManager.SignOut();
+
+            var login = new LoginPage();
+            login.Show();
             this.Close();
         }
     }

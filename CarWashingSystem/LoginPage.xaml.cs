@@ -74,7 +74,9 @@ namespace CarWashingSystem
 
         private void BtnSwitchToRegister_Click(object sender, RoutedEventArgs e)
         {
-
+            var register = new RegisterPage();
+            register.Show();
+            this.Close();
         }
     }
 }
