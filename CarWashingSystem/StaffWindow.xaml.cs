@@ -50,6 +50,13 @@ namespace CarWashingSystem
                     var booking = db.Bookings.FirstOrDefault(b => b.Id == bookingId);
                     if (booking != null)
                     {
+                        // Chỉ được đổi trạng thái khi thời gian hiện tại đã đến gần (trước 30 phút) hoặc đã quá giờ đặt
+                        if (System.DateTime.Now < booking.ScheduledStartTime.AddMinutes(-30))
+                        {
+                            MessageBox.Show($"Chưa đến lúc! Bạn chỉ có thể đổi trạng thái bắt đầu từ {booking.ScheduledStartTime.AddMinutes(-30):HH:mm dd/MM/yyyy} (trước giờ hẹn 30 phút).", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            return;
+                        }
+
                         // Logic chuyển đổi trạng thái công việc tịnh tiến
                         if (booking.Status == "Pending") booking.Status = "Confirmed";
                         else if (booking.Status == "Confirmed") booking.Status = "InProgress";
