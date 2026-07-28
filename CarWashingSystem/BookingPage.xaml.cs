@@ -1,4 +1,5 @@
 using CarWashingSystem.Entities;
+using CarWashingSystem.Services;
 using System.Windows;
 
 namespace CarWashingSystem
@@ -10,8 +11,9 @@ namespace CarWashingSystem
     {
         private CarWashingSystemDbContext _db;
 
-        // TODO: thay bang user dang dang nhap khi LoginPage hoan thanh
-        private const string CurrentCustomerId = "USR-CUST-01";
+        // Id cua khach hang dang dang nhap (lay tu SessionManager)
+        // Neu chua dang nhap thi tra ve chuoi rong => danh sach xe se trong
+        private string CurrentCustomerId => SessionManager.CurrentUser?.Id ?? "";
 
         // Id 2 goi dich vu trong bang WashServices, ung voi 2 RadioButton
         private const string SrvStandardId = "SRV-STANDARD";  // Rua tieu chuan - 50.000d  - 30 phut
@@ -139,10 +141,24 @@ namespace CarWashingSystem
             this.Close();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        // ===== TOPNAV =====
+        private void navProfile_Click(object sender, RoutedEventArgs e)
         {
-            var profilePage = new ProfilePage();
-            profilePage.Show();
+            new ProfilePage().Show();
+            this.Close();
+        }
+
+        private void navHistory_Click(object sender, RoutedEventArgs e)
+        {
+            new HistoryCust().Show();
+            this.Close();
+        }
+
+        private void navLogout_Click(object sender, RoutedEventArgs e)
+        {
+            SessionManager.SignOut();
+            new LoginPage().Show();
+            this.Close();
         }
     }
 }

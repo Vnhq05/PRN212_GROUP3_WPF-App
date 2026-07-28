@@ -65,10 +65,9 @@ namespace CarWashingSystem
             }
             else
             {
-                //var bookingPage = new BookingPage();
-                //bookingPage.Show();
-                var profile = new ProfilePage();
-                profile.Show();
+                // Khach hang vao thang man dat lich
+                var bookingPage = new BookingPage();
+                bookingPage.Show();
             }
 
             this.Close();

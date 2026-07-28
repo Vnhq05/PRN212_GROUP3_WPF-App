@@ -117,18 +117,34 @@ namespace CarWashingSystem
                 "Thành công", MessageBoxButton.OK, MessageBoxImage.Information);
 
             btnPay.IsEnabled = false;
+            var HistoryCust = new HistoryCust();
+            HistoryCust.Show();
             this.Close();
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show("Bạn có chắc muốn hủy thanh toán?", "Xác nhận",
+            var result = MessageBox.Show("Bạn có chắc muốn hủy đơn đặt lịch này?", "Xác nhận",
                 MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             if (result == MessageBoxResult.Yes)
             {
+          
+                if (_booking != null)
+                {
+                    _booking.Status = "Cancelled";
+                    _booking.UpdatedAt = DateTime.Now;
+                    _db.SaveChanges();
+
+                    MessageBox.Show($"Đã hủy đơn {_booking.Id}.", "Đã hủy",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+
+                var BookingPage = new BookingPage();
+                BookingPage.Show();
                 this.Close();
             }
         }
+
     }
 }

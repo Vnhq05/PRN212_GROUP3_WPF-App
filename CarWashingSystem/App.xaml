@@ -2,8 +2,55 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:CarWashingSystem"
-             StartupUri="StaffWindow.xaml">
+             StartupUri="LoginPage.xaml">
     <Application.Resources>
-         
+
+        <!-- ===== STYLE DUNG CHUNG CHO THANH TOPNAV =====
+             Khai bao o App.xaml de ca 3 man hinh
+             (BookingPage, ProfilePage, HistoryCust) dung chung,
+             khong phai chep lai o tung file. -->
+
+        <!-- Muc dieu huong binh thuong -->
+        <Style x:Key="NavButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#4B5563"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="18,14"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <!-- Vien duoi day dung de danh dau trang dang mo -->
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="0,0,0,3"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#F1F5F9"/>
+                    <Setter Property="Foreground" Value="#0284C7"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Muc dang mo: chu xanh + gach chan xanh -->
+        <Style x:Key="NavButtonActive" TargetType="Button" BasedOn="{StaticResource NavButton}">
+            <Setter Property="Foreground" Value="#0284C7"/>
+            <Setter Property="BorderBrush" Value="#0284C7"/>
+            <Setter Property="Cursor" Value="Arrow"/>
+        </Style>
+
+        <!-- Nut dang xuat -->
+        <Style x:Key="NavButtonLogout" TargetType="Button" BasedOn="{StaticResource NavButton}">
+            <Setter Property="Foreground" Value="#EF4444"/>
+        </Style>
+
     </Application.Resources>
 </Application>

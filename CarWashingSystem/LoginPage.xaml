@@ -40,7 +40,7 @@
                        Margin="0,0,0,20"/>
 
                 <!-- Ô nhập Tên đăng nhập / Số điện thoại -->
-                <TextBlock Text="Tên đăng nhập / SĐT" Foreground="#475569" FontSize="12" FontWeight="Medium" Margin="0,0,0,5"/>
+                <TextBlock Text="Mail / SĐT" Foreground="#475569" FontSize="12" FontWeight="Medium" Margin="0,0,0,5"/>
                 <Border BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="6" Margin="0,0,0,15" Padding="2">
                     <TextBox x:Name="txtUsername"
                       Height="35" 

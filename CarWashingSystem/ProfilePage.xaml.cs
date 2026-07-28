@@ -294,5 +294,25 @@ namespace CarWashingSystem
         {
             ClearForm();
         }
+
+        // ===== TOPNAV =====
+        private void navBooking_Click(object sender, RoutedEventArgs e)
+        {
+            new BookingPage().Show();
+            this.Close();
+        }
+
+        private void navHistory_Click(object sender, RoutedEventArgs e)
+        {
+            new HistoryCust().Show();
+            this.Close();
+        }
+
+        private void navLogout_Click(object sender, RoutedEventArgs e)
+        {
+            SessionManager.SignOut();
+            new LoginPage().Show();
+            this.Close();
+        }
     }
 }

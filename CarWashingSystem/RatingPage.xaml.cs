@@ -1,4 +1,5 @@
 using CarWashingSystem.Entities;
+using CarWashingSystem.Services;
 using System;
 using System.Linq;
 using System.Windows;
@@ -38,11 +39,20 @@ namespace CarWashingSystem
             else if (rb3Star.IsChecked == true) rating = 3;
             else if (rb4Star.IsChecked == true) rating = 4;
 
+            // Lay khach hang dang dang nhap, khong hardcode Id nua
+            var currentUser = SessionManager.CurrentUser;
+            if (currentUser == null)
+            {
+                MessageBox.Show("Bạn cần đăng nhập để gửi đánh giá.", "Chưa đăng nhập",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             var review = new ServiceReview
             {
                 Id = "REV-" + DateTime.Now.Ticks.ToString().Substring(10),
                 BookingId = _bookingId,
-                CustomerId = "CUST-001",
+                CustomerId = currentUser.Id,
                 OverallRating = rating,
                 CleanlinessRating = rating,
                 SpeedRating = rating,

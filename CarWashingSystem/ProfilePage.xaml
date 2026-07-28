@@ -5,8 +5,41 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CarWashingSystem"
         mc:Ignorable="d"
-        Title="ProfilePage" Height="688" Width="800">
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        Title="Hồ sơ cá nhân" Height="720" Width="900"
+        WindowStartupLocation="CenterScreen" Background="#F3F4F6">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Thanh điều hướng -->
+            <RowDefinition Height="*"/>
+            <!-- Nội dung trang -->
+        </Grid.RowDefinitions>
+
+        <!-- ===== TOPNAV ===== -->
+        <Border Grid.Row="0" Background="White" BorderBrush="#E5E7EB" BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="CAR WASHING" FontSize="18" FontWeight="ExtraBold"
+                           Foreground="#0284C7" VerticalAlignment="Center" Margin="20,0,25,0"/>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Content="Đặt Lịch" Style="{StaticResource NavButton}" Click="navBooking_Click"/>
+                    <!-- Trang đang mở => dùng style Active, không gắn Click -->
+                    <Button Content="Hồ Sơ"   Style="{StaticResource NavButtonActive}"/>
+                    <Button Content="Lịch Sử" Style="{StaticResource NavButton}" Click="navHistory_Click"/>
+                </StackPanel>
+
+                <Button Grid.Column="2" Content="Đăng Xuất" Margin="0,0,10,0"
+                        Style="{StaticResource NavButtonLogout}" Click="navLogout_Click"/>
+            </Grid>
+        </Border>
+
+    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="20">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -205,4 +238,5 @@
             </Border>
         </Grid>
     </ScrollViewer>
+    </Grid>
 </Window>

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CarWashingSystem"
         mc:Ignorable="d"
-        Title="Đặt lịch rửa xe" Height="640" Width="560"
+        Title="Đặt lịch rửa xe" Height="720" Width="900"
         WindowStartupLocation="CenterScreen"
         Background="#F3F4F6">
 
@@ -40,8 +40,40 @@
         </Style>
     </Window.Resources>
 
-    <!-- LƯỚI CĂN GIỮA MÀN HÌNH -->
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Thanh điều hướng -->
+            <RowDefinition Height="*"/>
+            <!-- Nội dung trang -->
+        </Grid.RowDefinitions>
+
+        <!-- ===== TOPNAV ===== -->
+        <Border Grid.Row="0" Background="White" BorderBrush="#E5E7EB" BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="CAR WASHING" FontSize="18" FontWeight="ExtraBold"
+                           Foreground="#0284C7" VerticalAlignment="Center" Margin="20,0,25,0"/>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- Trang đang mở => dùng style Active, không gắn Click -->
+                    <Button Content="Đặt Lịch" Style="{StaticResource NavButtonActive}"/>
+                    <Button Content="Hồ Sơ"   Style="{StaticResource NavButton}" Click="navProfile_Click"/>
+                    <Button Content="Lịch Sử" Style="{StaticResource NavButton}" Click="navHistory_Click"/>
+                </StackPanel>
+
+                <Button Grid.Column="2" Content="Đăng Xuất" Margin="0,0,10,0"
+                        Style="{StaticResource NavButtonLogout}" Click="navLogout_Click"/>
+            </Grid>
+        </Border>
+
+        <!-- LƯỚI CĂN GIỮA MÀN HÌNH -->
+        <Grid Grid.Row="1">
         <!-- KHỐI CARD TRẮNG BO GÓC (Giống hệt trang Login) -->
         <Border Background="White" Width="450" VerticalAlignment="Center" HorizontalAlignment="Center"
                 CornerRadius="12" Margin="20" Padding="30,40,30,40">
@@ -91,11 +123,11 @@
                 <Button Name="btnConfirm" Content="Xác Nhận Đặt Lịch" Height="42"
                         Click="btnConfirm_Click"
                         Style="{StaticResource RoundedButtonStyle}" />
-                <Button Content="Profile" Click="Button_Click"/>
 
             </StackPanel>
-            
+
         </Border>
-        
+
+        </Grid>
     </Grid>
 </Window>
