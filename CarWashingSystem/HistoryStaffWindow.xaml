@@ -7,6 +7,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
         <!-- Header -->
@@ -66,11 +67,21 @@
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
-                
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-                    <Button Content="Quay về trang Staff" Click="btnBack_Click" Width="160" Height="40" Background="#F1F5F9" Foreground="#334155" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
-                </StackPanel>
             </StackPanel>
+        </Border>
+
+        <!-- Bottom Action -->
+        <Border Grid.Row="2" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="10" Padding="15" Margin="0,15,0,0">
+            <Grid>
+                <TextBlock Text="Cảm ơn bạn đã nỗ lực hoàn thành công việc!" VerticalAlignment="Center" Foreground="#6B7280" FontStyle="Italic"/>
+                <Button Content="Quay về trang Staff" Click="btnBack_Click" Width="180" Height="40" Background="#64748B" Foreground="White" FontWeight="Bold" BorderThickness="0" HorizontalAlignment="Right" Cursor="Hand">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="6"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+            </Grid>
         </Border>
     </Grid>
 </Window>

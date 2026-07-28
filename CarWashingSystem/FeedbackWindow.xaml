@@ -1,7 +1,7 @@
 <Window x:Class="CarWashingSystem.FeedbackWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Đánh Giá Khách Hàng - Hệ Thống Rửa Xe" Height="600" Width="800"
+        Title="Đánh Giá Khách Hàng - Hệ Thống Rửa Xe" Height="600" Width="900"
         WindowStartupLocation="CenterScreen" Background="#F4F7FB">
     <Grid Margin="20">
         <Grid.RowDefinitions>
@@ -78,7 +78,13 @@
         <Border Grid.Row="2" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="10" Padding="15" Margin="0,15,0,0">
             <Grid>
                 <TextBlock Text="Cảm ơn bạn đã luôn cung cấp dịch vụ tốt nhất!" VerticalAlignment="Center" Foreground="#6B7280" FontStyle="Italic"/>
-                <Button Content="Quay về trang Staff" Click="btnBack_Click" Width="180" Height="40" Background="#F1F5F9" Foreground="#334155" FontWeight="Bold" BorderThickness="0" HorizontalAlignment="Right" Cursor="Hand"/>
+                <Button Content="Quay về trang Staff" Click="btnBack_Click" Width="180" Height="40" Background="#64748B" Foreground="White" FontWeight="Bold" BorderThickness="0" HorizontalAlignment="Right" Cursor="Hand">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="6"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
             </Grid>
         </Border>
         
