@@ -84,7 +84,7 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="80" IsReadOnly="True" />
                             <DataGridTextColumn Header="CustomerId" Binding="{Binding CustomerId}" Width="100" IsReadOnly="True" />
-                            <DataGridTextColumn Header="BranchId" Binding="{Binding BranchId}" Width="80" IsReadOnly="True" />
+                            <!-- BranchId column removed (feature disabled) -->
                             <DataGridTextColumn Header="AssignedStaffId" Binding="{Binding AssignedStaffId}" Width="110" IsReadOnly="True" />
                             <DataGridTextColumn Header="CustomerVehicleId" Binding="{Binding CustomerVehicleId}" Width="120" IsReadOnly="True" />
                             <DataGridTextColumn Header="BookingDate" Binding="{Binding BookingDate}" Width="100" IsReadOnly="True" />

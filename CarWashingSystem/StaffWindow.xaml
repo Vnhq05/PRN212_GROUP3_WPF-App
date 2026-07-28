@@ -16,7 +16,7 @@
             </StackPanel>
             
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Width="440" FlowDirection="RightToLeft">
-                <Button Content="Đăng Xuất" Height="38" Width="100" Background="#FEE2E2" Foreground="#EF4444" FontWeight="Bold" BorderThickness="0" Cursor="Hand" Margin="0,0,10,0"/>
+                <Button Content="Đăng Xuất" Click="btnLogout_Click" Height="38" Width="100" Background="#FEE2E2" Foreground="#EF4444" FontWeight="Bold" BorderThickness="0" Cursor="Hand" Margin="0,0,10,0"/>
                 <Button Content="Xem Lịch Sử" Click="btnHistory_Click" Height="38" Width="130" Background="#FEF3C7" Foreground="#D97706" FontWeight="Bold" BorderThickness="0" Margin="0,0,10,0" Cursor="Hand"/>
                 <Button Content="Xem Đánh Giá" Click="btnFeedback_Click" Height="38" Width="130" Background="#E0F2FE" Foreground="#0284C7" FontWeight="Bold" BorderThickness="0" Margin="0,0,10,0" Cursor="Hand"/>
             </StackPanel>

@@ -16,9 +16,6 @@ public partial class User
     public string? Password { get; set; }
 
     public string RoleId { get; set; } = null!;
-
-    public string? BranchId { get; set; }
-
     public string? Address { get; set; }
 
     public string? AvatarUrl { get; set; }
@@ -34,9 +31,6 @@ public partial class User
     public virtual ICollection<Booking> BookingAssignedStaffs { get; set; } = new List<Booking>();
 
     public virtual ICollection<Booking> BookingCustomers { get; set; } = new List<Booking>();
-
-    public virtual Branch? Branch { get; set; }
-
     public virtual ICollection<CustomerVehicle> CustomerVehicles { get; set; } = new List<CustomerVehicle>();
 
     public virtual Role Role { get; set; } = null!;

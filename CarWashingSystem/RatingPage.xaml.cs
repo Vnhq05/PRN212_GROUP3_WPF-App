@@ -43,7 +43,6 @@ namespace CarWashingSystem
                 Id = "REV-" + DateTime.Now.Ticks.ToString().Substring(10),
                 BookingId = _bookingId,
                 CustomerId = "CUST-001",
-                BranchId = "BR-001",
                 OverallRating = rating,
                 CleanlinessRating = rating,
                 SpeedRating = rating,
