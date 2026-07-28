@@ -65,8 +65,10 @@ namespace CarWashingSystem
             }
             else
             {
-                var bookingPage = new BookingPage();
-                bookingPage.Show();
+                //var bookingPage = new BookingPage();
+                //bookingPage.Show();
+                var profile = new ProfilePage();
+                profile.Show();
             }
 
             this.Close();

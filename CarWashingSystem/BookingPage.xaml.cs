@@ -138,5 +138,11 @@ namespace CarWashingSystem
             new Payment(booking.Id).Show();
             this.Close();
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var profilePage = new ProfilePage();
+            profilePage.Show();
+        }
     }
 }

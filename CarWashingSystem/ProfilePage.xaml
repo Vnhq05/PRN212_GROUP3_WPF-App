@@ -36,17 +36,17 @@
 
                     <!-- Thông tin -->
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="{Binding FullName, FallbackValue='Nguyễn Văn A'}" FontSize="20" FontWeight="Bold" Foreground="#1E293B"/>
+                        <TextBlock Name="txtUserName" FontSize="20" FontWeight="Bold" Foreground="#1E293B"/>
 
                         <WrapPanel Margin="0,8,0,0">
                             <StackPanel Orientation="Horizontal" Margin="0,0,25,5">
                                 <TextBlock Text="Gmail: " FontWeight="SemiBold" Foreground="#64748B" FontSize="13"/>
-                                <TextBlock Text="{Binding Email, FallbackValue='nguyenvana@gmail.com'}" Foreground="#334155" FontSize="13"/>
+                                <TextBlock Name="txtUserMail" Foreground="#334155" FontSize="13"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Margin="0,0,25,5">
                                 <TextBlock Text="SĐT: " FontWeight="SemiBold" Foreground="#64748B" FontSize="13"/>
-                                <TextBlock Text="{Binding Phone, FallbackValue='0901234567'}" Foreground="#334155" FontSize="13"/>
+                                <TextBlock Name="txtUserPhone" Foreground="#334155" FontSize="13"/>
                             </StackPanel>
                         </WrapPanel>
                     </StackPanel>
@@ -62,7 +62,7 @@
                 <StackPanel>
                     <TextBlock Text="DANH SÁCH XE ĐÃ ĐĂNG KÝ" FontSize="16" FontWeight="Bold" Foreground="#0284C7" Margin="0,0,0,15"/>
 
-                    <DataGrid ItemsSource="{Binding Vehicles}" 
+                    <DataGrid Name="dgVehicle" ItemsSource="{Binding Vehicles}" 
                           SelectedItem="{Binding SelectedVehicle}"
                           AutoGenerateColumns="False" 
                           CanUserAddRows="False"
@@ -73,7 +73,7 @@
                           BorderThickness="1"
                           GridLinesVisibility="Horizontal"
                           HorizontalGridLinesBrush="#F1F5F9"
-                          RowHeight="35">
+                          RowHeight="35" SelectionChanged="dgVehicle_SelectionChanged">
                         <DataGrid.Resources>
                             <Style TargetType="DataGridColumnHeader">
                                 <Setter Property="Background" Value="#F8FAFC"/>
@@ -88,9 +88,8 @@
 
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Biển số xe" Binding="{Binding LicensePlate}" Width="140"/>
-                            <DataGridTextColumn Header="Loại xe" Binding="{Binding VehicleType}" Width="120"/>
-                            <DataGridTextColumn Header="Thương hiệu / Dòng xe" Binding="{Binding Brand}" Width="200"/>
-                            <DataGridTextColumn Header="Ghi chú" Binding="{Binding Note}" Width="*"/>
+                            <DataGridTextColumn Header="Thương hiệu / Dòng xe" Binding="{Binding VehicleModel}" Width="200"/>
+                            <DataGridTextColumn Header="Màu xe" Binding="{Binding Color}" Width="100"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </StackPanel>
@@ -111,21 +110,28 @@
                         <StackPanel Margin="0,0,10,10">
                             <TextBlock Text="Biển số xe (*)" Foreground="#475569" FontSize="12" FontWeight="Medium" Margin="0,0,0,4"/>
                             <Border BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="6" Padding="2">
-                                <TextBox Height="30" BorderThickness="0" VerticalContentAlignment="Center" Padding="8,0" FontSize="13" Background="Transparent"
+                                <TextBox x:Name="txtLicensePlate" Height="30" BorderThickness="0" VerticalContentAlignment="Center" Padding="8,0" FontSize="13" Background="Transparent"
                                      Text="{Binding InputLicensePlate, UpdateSourceTrigger=PropertyChanged}"/>
                             </Border>
                         </StackPanel>
 
                         <!-- Loại xe -->
                         <StackPanel Margin="10,0,0,10">
-                            <TextBlock Text="Loại xe" Foreground="#475569" FontSize="12" FontWeight="Medium" Margin="0,0,0,4"/>
+                            <TextBlock Text="Màu xe" Foreground="#475569" FontSize="12" FontWeight="Medium" Margin="0,0,0,4"/>
                             <Border BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="6" Padding="2">
-                                <ComboBox Height="30" BorderThickness="0" VerticalContentAlignment="Center" Padding="8,0" FontSize="13"
-                                      Text="{Binding InputVehicleType}">
-                                    <ComboBoxItem Content="Ô tô 4 chỗ"/>
-                                    <ComboBoxItem Content="Ô tô 7 chỗ"/>
-                                    <ComboBoxItem Content="Xe bán tải / SUV"/>
-                                    <ComboBoxItem Content="Xe máy"/>
+                                <ComboBox x:Name="cbxColor" Height="30" BorderThickness="0" VerticalContentAlignment="Center" Padding="8,0" FontSize="13"
+                                      SelectedValuePath="Content">
+                                    <ComboBoxItem Content="Đỏ"/>
+                                    <ComboBoxItem Content="Xanh"/>
+                                    <ComboBoxItem Content="Xanh lá"/>
+                                    <ComboBoxItem Content="Hồng"/>
+                                    <ComboBoxItem Content="Đen"/>
+                                    <ComboBoxItem Content="Trắng"/>
+                                    <ComboBoxItem Content="Bạc"/>
+                                    <ComboBoxItem Content="Nâu"/>
+                                    <ComboBoxItem Content="Vàng"/>
+                                    <ComboBoxItem Content="Xám"/>
+
                                 </ComboBox>
                             </Border>
                         </StackPanel>
@@ -134,29 +140,33 @@
                         <StackPanel Margin="0,0,10,10">
                             <TextBlock Text="Thương hiệu / Dòng xe" Foreground="#475569" FontSize="12" FontWeight="Medium" Margin="0,0,0,4"/>
                             <Border BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="6" Padding="2">
-                                <TextBox Height="30" BorderThickness="0" VerticalContentAlignment="Center" Padding="8,0" FontSize="13" Background="Transparent"
+                                <TextBox x:Name="txtModel" Height="30" BorderThickness="0" VerticalContentAlignment="Center" Padding="8,0" FontSize="13" Background="Transparent"
                                      Text="{Binding InputBrand, UpdateSourceTrigger=PropertyChanged}"/>
-                            </Border>
-                        </StackPanel>
-
-                        <!-- Ghi chú -->
-                        <StackPanel Margin="10,0,0,10">
-                            <TextBlock Text="Ghi chú" Foreground="#475569" FontSize="12" FontWeight="Medium" Margin="0,0,0,4"/>
-                            <Border BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="6" Padding="2">
-                                <TextBox Height="30" BorderThickness="0" VerticalContentAlignment="Center" Padding="8,0" FontSize="13" Background="Transparent"
-                                     Text="{Binding InputNote, UpdateSourceTrigger=PropertyChanged}"/>
                             </Border>
                         </StackPanel>
                     </UniformGrid>
 
                     <!-- Các nút chức năng -->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                        <!-- Nút làm sạch -->
+                        <Button x:Name="btnClear" Content="Làm Sạch" 
+                            Width="100" Height="36" 
+                            Background="#64748B" Foreground="White" 
+                            FontWeight="Bold" FontSize="13" BorderThickness="0" Margin="0,0,10,0" 
+                            Click="btnClear_Click">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="6"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+
                         <!-- Nút Thêm xe -->
-                        <Button Content="+ Thêm Xe Mới" 
+                        <Button x:Name="btnAdd" Content="+ Thêm Xe Mới" 
                             Command="{Binding AddVehicleCommand}"
                             Width="130" Height="36" 
                             Background="#0284C7" Foreground="White" 
-                            FontWeight="Bold" FontSize="13" BorderThickness="0" Margin="0,0,10,0">
+                            FontWeight="Bold" FontSize="13" BorderThickness="0" Margin="0,0,10,0" Click="btnAdd_Click" >
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="6"/>
@@ -165,11 +175,11 @@
                         </Button>
 
                         <!-- Nút Cập nhật -->
-                        <Button Content="Lưu / Cập Nhật" 
+                        <Button x:Name="btnUpdate" Content="Lưu / Cập Nhật" 
                             Command="{Binding UpdateVehicleCommand}"
                             Width="140" Height="36" 
                             Background="#0D9488" Foreground="White" 
-                            FontWeight="Bold" FontSize="13" BorderThickness="0" Margin="0,0,10,0">
+                            FontWeight="Bold" FontSize="13" BorderThickness="0" Margin="0,0,10,0" Click="btnUpdate_Click">
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="6"/>
@@ -178,17 +188,18 @@
                         </Button>
 
                         <!-- Nút Xóa -->
-                        <Button Content="Xóa Xe" 
+                        <Button x:Name="btnDelete" Content="Xóa Xe" 
                             Command="{Binding DeleteVehicleCommand}"
                             Width="100" Height="36" 
                             Background="#EF4444" Foreground="White" 
-                            FontWeight="Bold" FontSize="13" BorderThickness="0">
+                            FontWeight="Bold" FontSize="13" BorderThickness="0" Click="btnDelete_Click">
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="6"/>
                                 </Style>
                             </Button.Resources>
                         </Button>
+
                     </StackPanel>
                 </StackPanel>
             </Border>
