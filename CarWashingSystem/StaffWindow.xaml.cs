@@ -21,6 +21,8 @@ namespace CarWashingSystem
         {
             using (var db = new CarWashingSystemDbContext())
             {
+                // Dùng Entity Framework Core để truy vấn DB. Include() tương đương với JOIN trong SQL để lấy thông tin Customer và Vehicle.
+                // Lọc ra các công việc đang ở trạng thái chưa hoàn thành (Pending, Confirmed, InProgress)
                 var jobs = db.Bookings
                              .Include(b => b.Customer)
                              .Include(b => b.CustomerVehicle)
@@ -28,6 +30,7 @@ namespace CarWashingSystem
                              .OrderBy(b => b.ScheduledStartTime)
                              .ToList();
                              
+                // Đổ dữ liệu vào DataGrid (Data Binding)
                 dgCurrentJobs.ItemsSource = jobs;
             }
         }
@@ -36,6 +39,8 @@ namespace CarWashingSystem
         {
             var btn = sender as Button;
             if (btn == null) return;
+            
+            // Lấy ID của Booking từ thuộc tính Tag đã được gán (Binding) ở file XAML
             string bookingId = btn.Tag?.ToString();
 
             if (!string.IsNullOrEmpty(bookingId))
@@ -45,11 +50,14 @@ namespace CarWashingSystem
                     var booking = db.Bookings.FirstOrDefault(b => b.Id == bookingId);
                     if (booking != null)
                     {
+                        // Logic chuyển đổi trạng thái công việc tịnh tiến
                         if (booking.Status == "Pending") booking.Status = "Confirmed";
                         else if (booking.Status == "Confirmed") booking.Status = "InProgress";
                         else if (booking.Status == "InProgress") booking.Status = "Completed";
 
+                        // Lưu thay đổi xuống Database
                         db.SaveChanges();
+                        // Tải lại lưới dữ liệu để cập nhật UI
                         LoadData(); 
                     }
                 }

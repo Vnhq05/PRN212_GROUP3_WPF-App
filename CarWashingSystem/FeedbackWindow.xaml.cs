@@ -17,6 +17,8 @@ namespace CarWashingSystem
         {
             using (var db = new CarWashingSystemDbContext())
             {
+                // Truy vấn bảng ServiceReviews (Đánh giá) và JOIN với bảng Customer để lấy tên khách hàng
+                // Sắp xếp mới nhất lên đầu
                 var feedbacks = db.ServiceReviews
                                   .Include(r => r.Customer)
                                   .OrderByDescending(r => r.CreatedAt)

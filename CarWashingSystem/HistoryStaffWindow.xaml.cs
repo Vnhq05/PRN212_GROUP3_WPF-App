@@ -17,6 +17,8 @@ namespace CarWashingSystem
         {
             using (var db = new CarWashingSystemDbContext())
             {
+                // Lấy ra các công việc (Bookings) đã hoàn thành (Status == "Completed")
+                // Sắp xếp giảm dần theo thời gian (OrderByDescending) để xem việc mới làm xong trước
                 var historyJobs = db.Bookings
                              .Include(b => b.Customer)
                              .Include(b => b.CustomerVehicle)

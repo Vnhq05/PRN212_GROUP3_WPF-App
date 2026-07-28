@@ -20,7 +20,9 @@
         <!-- Main Content -->
         <Border Grid.Row="1" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="10" Padding="25">
             <StackPanel>
+                <!-- Sửa giao diện DataGrid: Ẩn đường kẻ dọc, để nền trắng, đổi màu viền ngang và tăng RowHeight cho thoáng -->
                 <DataGrid x:Name="dgHistoryJobs" MinHeight="350" AutoGenerateColumns="False" CanUserAddRows="False" Background="White" BorderBrush="#E2E8F0" BorderThickness="1" RowHeight="45" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F1F5F9" HeadersVisibility="Column">
+                    <!-- Custom Header: Tăng chiều cao, in đậm, đổi màu nền xám nhạt để dễ nhìn -->
                     <DataGrid.ColumnHeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="Background" Value="#F8FAFC"/>
@@ -30,6 +32,7 @@
                             <Setter Property="Padding" Value="10,0"/>
                         </Style>
                     </DataGrid.ColumnHeaderStyle>
+                    <!-- Custom Cell: Bỏ viền gạch đứt (focus border) mặc định của WPF khi click vào ô -->
                     <DataGrid.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Setter Property="Padding" Value="10,0"/>
@@ -51,6 +54,7 @@
                         <DataGridTextColumn Header="Biển Số Xe" Binding="{Binding CustomerVehicle.LicensePlate}" Width="120"/>
                         <DataGridTextColumn Header="Khung Giờ" Binding="{Binding ScheduledStartTime, StringFormat='dd/MM/yyyy HH:mm'}" Width="150"/>
                         <DataGridTextColumn Header="Giá(VNĐ)" Binding="{Binding TotalPrice, StringFormat='N0'}" Width="110"/>
+                        <!-- Cột Trạng Thái (Badge): Dùng DataTemplate bọc TextBlock trong Border có bo góc -->
                         <DataGridTemplateColumn Header="Trạng Thái" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>

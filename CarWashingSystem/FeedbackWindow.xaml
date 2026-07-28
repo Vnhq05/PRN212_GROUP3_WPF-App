@@ -20,7 +20,9 @@
 
         <!-- Feedback List (DataGrid) -->
         <Border Grid.Row="1" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="10" Padding="20">
+            <!-- Sửa giao diện DataGrid: Ẩn đường kẻ dọc, để nền trắng, đổi màu viền ngang và tăng RowHeight cho thoáng -->
             <DataGrid x:Name="dgFeedback" MinHeight="300" AutoGenerateColumns="False" CanUserAddRows="False" Background="White" BorderBrush="#E2E8F0" BorderThickness="1" RowHeight="45" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F1F5F9" HeadersVisibility="Column">
+                <!-- Custom Header: Tăng chiều cao, in đậm, đổi màu nền xám nhạt để dễ nhìn -->
                 <DataGrid.ColumnHeaderStyle>
                     <Style TargetType="DataGridColumnHeader">
                         <Setter Property="Background" Value="#F8FAFC"/>
@@ -30,6 +32,7 @@
                         <Setter Property="Padding" Value="10,0"/>
                     </Style>
                 </DataGrid.ColumnHeaderStyle>
+                <!-- Custom Cell: Bỏ viền gạch đứt (focus border) mặc định của WPF khi click vào ô -->
                 <DataGrid.CellStyle>
                     <Style TargetType="DataGridCell">
                         <Setter Property="Padding" Value="10,0"/>
@@ -49,6 +52,7 @@
                     <DataGridTextColumn Header="Ngày" Binding="{Binding CreatedAt, StringFormat='dd/MM/yyyy HH:mm'}" Width="150"/>
                     <DataGridTextColumn Header="Khách Hàng" Binding="{Binding Customer.FullName}" Width="150"/>
                     <DataGridTextColumn Header="Mã Dịch Vụ" Binding="{Binding BookingId}" Width="120"/>
+                    <!-- Cột Đánh Giá: Dùng StackPanel ngang để chứa Icon Ngôi sao và Điểm số kế bên nhau -->
                     <DataGridTemplateColumn Header="Điểm (Sao)" Width="120">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>

@@ -27,7 +27,9 @@
             <StackPanel>
                 <TextBlock Text="CÔNG VIỆC HIỆN TẠI" FontSize="18" FontWeight="Bold" Foreground="#333" Margin="0,0,0,20"/>
                 
+                <!-- Sửa giao diện DataGrid: Ẩn đường kẻ dọc, để nền trắng, đổi màu viền ngang và tăng RowHeight cho thoáng -->
                 <DataGrid x:Name="dgCurrentJobs" MinHeight="300" AutoGenerateColumns="False" CanUserAddRows="False" Background="White" BorderBrush="#E2E8F0" BorderThickness="1" RowHeight="45" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F1F5F9" HeadersVisibility="Column">
+                    <!-- Custom Header: Tăng chiều cao, in đậm, đổi màu nền xám nhạt để dễ nhìn -->
                     <DataGrid.ColumnHeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="Background" Value="#F8FAFC"/>
@@ -37,6 +39,7 @@
                             <Setter Property="Padding" Value="10,0"/>
                         </Style>
                     </DataGrid.ColumnHeaderStyle>
+                    <!-- Custom Cell: Bỏ viền gạch đứt (focus border) mặc định của WPF khi click vào ô -->
                     <DataGrid.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Setter Property="Padding" Value="10,0"/>
@@ -58,6 +61,7 @@
                         <DataGridTextColumn Header="Biển Số Xe" Binding="{Binding CustomerVehicle.LicensePlate}" Width="120"/>
                         <DataGridTextColumn Header="Khung Giờ" Binding="{Binding ScheduledStartTime, StringFormat='dd/MM/yyyy HH:mm'}" Width="150"/>
                         <DataGridTextColumn Header="Giá(VNĐ)" Binding="{Binding TotalPrice, StringFormat='N0'}" Width="110"/>
+                        <!-- Cột Trạng Thái (Badge): Dùng DataTemplate bọc TextBlock trong Border có bo góc. Dùng DataTrigger đổi màu theo Status -->
                         <DataGridTemplateColumn Header="Trạng Thái" Width="120">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -111,6 +115,7 @@
                                 <DataTemplate>
                                     <Button Content="Đổi Trạng Thái" Click="btnChangeStatus_Click" Tag="{Binding Id}" 
                                             Background="#0284C7" Foreground="White" FontWeight="Bold" Cursor="Hand" BorderThickness="0" Height="30" Width="110" HorizontalAlignment="Left">
+                                        <!-- Can thiệp Button.Resources để bo góc nhanh cho nút bấm mà không cần viết lại toàn bộ ControlTemplate -->
                                         <Button.Resources>
                                             <Style TargetType="Border">
                                                 <Setter Property="CornerRadius" Value="6"/>
