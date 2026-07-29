@@ -58,9 +58,20 @@ namespace CarWashingSystem
                         }
 
                         // Logic chuyển đổi trạng thái công việc tịnh tiến
-                        if (booking.Status == "Pending") booking.Status = "Confirmed";
-                        else if (booking.Status == "Confirmed") booking.Status = "InProgress";
-                        else if (booking.Status == "InProgress") booking.Status = "Completed";
+                        if (booking.Status == "Pending") 
+                        {
+                            booking.Status = "Confirmed";
+                        }
+                        else if (booking.Status == "Confirmed") 
+                        {
+                            booking.Status = "InProgress";
+                            booking.CheckInTime = System.DateTime.Now; // Ghi nhận giờ bắt đầu rửa
+                        }
+                        else if (booking.Status == "InProgress") 
+                        {
+                            booking.Status = "Completed";
+                            booking.CheckoutTime = System.DateTime.Now; // Ghi nhận giờ hoàn thành
+                        }
 
                         // Lưu thay đổi xuống Database
                         db.SaveChanges();
