@@ -9,8 +9,6 @@ namespace CarWashingSystem
 {
     public partial class StaffWindow : Window
     {
-        private string currentStaffId = "USR-STAFF-01"; // Hardcoded for demo if needed, but not filtering by staff yet based on original logic
-
         public StaffWindow()
         {
             InitializeComponent();
@@ -56,6 +54,14 @@ namespace CarWashingSystem
                             MessageBox.Show($"Chưa đến lúc! Bạn chỉ có thể đổi trạng thái bắt đầu từ {booking.ScheduledStartTime.AddMinutes(-30):HH:mm dd/MM/yyyy} (trước giờ hẹn 30 phút).", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
                             return;
                         }
+
+                        // Ghi nhận nhân viên thực hiện thao tác
+                        if (SessionManager.CurrentUser == null)
+                        {
+                            MessageBox.Show("Lỗi: Không tìm thấy thông tin nhân viên đang đăng nhập!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                            return;
+                        }
+                        booking.AssignedStaffId = SessionManager.CurrentUser.Id;
 
                         // Logic chuyển đổi trạng thái công việc tịnh tiến
                         if (booking.Status == "Pending") 
