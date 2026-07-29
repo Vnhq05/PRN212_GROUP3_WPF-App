@@ -12,12 +12,12 @@ namespace CarWashingSystem
         private CarWashingSystemDbContext _db;
 
         // Id cua khach hang dang dang nhap (lay tu SessionManager)
-        // Neu chua dang nhap thi tra ve chuoi rong => danh sach xe se trong
+
         private string CurrentCustomerId => SessionManager.CurrentUser?.Id ?? "";
 
         // Id 2 goi dich vu trong bang WashServices, ung voi 2 RadioButton
-        private const string SrvStandardId = "SRV-STANDARD";  // Rua tieu chuan - 50.000d  - 30 phut
-        private const string SrvPremiumId = "SRV-PREMIUM";    // Rua cao cap    - 100.000d - 45 phut
+        private const string SrvStandardId = "SRV-STANDARD"; 
+        private const string SrvPremiumId = "SRV-PREMIUM";    
 
         public BookingPage()
         {
@@ -42,7 +42,6 @@ namespace CarWashingSystem
             cmbCars.SelectedIndex = 0;
         }
 
-        // Sinh khung gio 08:00 -> 17:30, moi 30 phut
         private void LoadTimeSlots()
         {
             var slots = new List<string>();

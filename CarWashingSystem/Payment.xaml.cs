@@ -96,15 +96,13 @@ namespace CarWashingSystem
                 Id = "INV-" + DateTime.Now.ToString("yyyyMMddHHmmss"),
                 BookingId = _booking.Id,
                 OriginalAmount = _booking.TotalPrice,
-                DiscountAmount = 0,
-                FinalAmount = _booking.TotalPrice,
                 PaymentMethod = paymentMethod,
                 PaymentStatus = "Paid",
                 PaymentTime = DateTime.Now
             };
 
             _db.Invoices.Add(invoice);
-            _booking.Status = "Confirmed";
+            _booking.Status = "Pending";
             _booking.UpdatedAt = DateTime.Now;
 
             _db.SaveChanges();

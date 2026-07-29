@@ -9,8 +9,6 @@ namespace CarWashingSystem
 {
     public partial class StaffWindow : Window
     {
-        private string currentStaffId = "USR-STAFF-01"; // Hardcoded for demo if needed, but not filtering by staff yet based on original logic
-
         public StaffWindow()
         {
             InitializeComponent();
@@ -29,7 +27,7 @@ namespace CarWashingSystem
                              .Where(b => b.Status == "Pending" || b.Status == "Confirmed" || b.Status == "InProgress")
                              .OrderBy(b => b.ScheduledStartTime)
                              .ToList();
-                             
+
                 // Đổ dữ liệu vào DataGrid (Data Binding)
                 dgCurrentJobs.ItemsSource = jobs;
             }
@@ -39,7 +37,7 @@ namespace CarWashingSystem
         {
             var btn = sender as Button;
             if (btn == null) return;
-            
+
             // Lấy ID của Booking từ thuộc tính Tag đã được gán (Binding) ở file XAML
             string bookingId = btn.Tag?.ToString();
 
@@ -57,15 +55,34 @@ namespace CarWashingSystem
                             return;
                         }
 
+                        // Ghi nhận nhân viên thực hiện thao tác
+                        if (SessionManager.CurrentUser == null)
+                        {
+                            MessageBox.Show("Lỗi: Không tìm thấy thông tin nhân viên đang đăng nhập!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                            return;
+                        }
+                        booking.AssignedStaffId = SessionManager.CurrentUser.Id;
+
                         // Logic chuyển đổi trạng thái công việc tịnh tiến
-                        if (booking.Status == "Pending") booking.Status = "Confirmed";
-                        else if (booking.Status == "Confirmed") booking.Status = "InProgress";
-                        else if (booking.Status == "InProgress") booking.Status = "Completed";
+                        if (booking.Status == "Pending")
+                        {
+                            booking.Status = "Confirmed";
+                        }
+                        else if (booking.Status == "Confirmed")
+                        {
+                            booking.Status = "InProgress";
+                            booking.CheckInTime = System.DateTime.Now; // Ghi nhận giờ bắt đầu rửa
+                        }
+                        else if (booking.Status == "InProgress")
+                        {
+                            booking.Status = "Completed";
+                            booking.CheckoutTime = System.DateTime.Now; // Ghi nhận giờ hoàn thành
+                        }
 
                         // Lưu thay đổi xuống Database
                         db.SaveChanges();
                         // Tải lại lưới dữ liệu để cập nhật UI
-                        LoadData(); 
+                        LoadData();
                     }
                 }
             }
