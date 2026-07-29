@@ -64,16 +64,28 @@ namespace CarWashingSystem
                         booking.AssignedStaffId = SessionManager.CurrentUser.Id;
 
                         // Logic chuyển đổi trạng thái công việc tịnh tiến
+<<<<<<< HEAD
                         if (booking.Status == "Pending")
                         {
                             booking.Status = "Confirmed";
                         }
                         else if (booking.Status == "Confirmed")
+=======
+                        if (booking.Status == "Pending") 
+                        {
+                            booking.Status = "Confirmed";
+                        }
+                        else if (booking.Status == "Confirmed") 
+>>>>>>> 93697f926b7208586192b351aad7add3e7694af3
                         {
                             booking.Status = "InProgress";
                             booking.CheckInTime = System.DateTime.Now; // Ghi nhận giờ bắt đầu rửa
                         }
+<<<<<<< HEAD
                         else if (booking.Status == "InProgress")
+=======
+                        else if (booking.Status == "InProgress") 
+>>>>>>> 93697f926b7208586192b351aad7add3e7694af3
                         {
                             booking.Status = "Completed";
                             booking.CheckoutTime = System.DateTime.Now; // Ghi nhận giờ hoàn thành
